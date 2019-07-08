@@ -1,5 +1,7 @@
 # Raft
 
+[![Build Status](https://travis-ci.com/skyzh/raft.svg?token=szB6fz2m5vb2KyfAiZ3B&branch=master)](https://travis-ci.com/skyzh/raft)
+
 The Raft Consensus Algorithm. This is an implementation in C++.
 
 ## Usage

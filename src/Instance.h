@@ -6,9 +6,11 @@
 #define RAFT_INSTANCE_H
 
 #include <string>
+#include <map>
 #include <google/protobuf/message.h>
 #include <boost/optional.hpp>
 
+#include "utils.h"
 #include "LogStorage.h"
 #include "MockRPCClient.h"
 
@@ -18,12 +20,12 @@ using std::vector;
 using boost::optional;
 using google::protobuf::Message;
 using std::string;
+using std::map;
 
 enum Role {
     FOLLOWER = 0, CANDIDATE, LEADER
 };
 
-using TICK = unsigned long long;
 using Cluster = string;
 
 class Instance {
@@ -35,26 +37,31 @@ public:
     const string id;
     shared_ptr<MockRPCClient> rpc;
     vector<Cluster> clusters;
+    vector<Cluster> clusters_including_self;
     TICK follower_timeout;
     TICK follower_begin;
+    TICK election_timeout;
     TICK election_begin;
     unsigned election_vote_cnt;
+    map <Cluster, bool> voted_for_self;
 
     Instance(const string &id, shared_ptr<MockRPCClient> rpc);
 
     int run();
 
-    void start(TICK tick);
+    void start();
 
-    void update(TICK tick);
+    void update();
 
     TICK generate_timeout();
 
-    void begin_election(TICK tick);
+    void begin_election();
 
-    void as_follower(TICK tick);
+    void as_follower();
 
-    void as_candidate(TICK tick);
+    void as_candidate();
+
+    void as_leader();
 
     void set_clusters(const vector<Cluster>& clusters);
 
@@ -62,7 +69,7 @@ public:
 
     void on_rpc(const string& from, shared_ptr<Message> message);
 
-    unique_ptr<Message> on_rpc();
+    bool high_term(shared_ptr<Message> message);
 };
 
 
