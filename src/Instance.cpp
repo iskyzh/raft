@@ -174,6 +174,11 @@ void Instance::sync_log() {
     for (auto &&cluster : clusters) {
         auto rpc_message = make_shared<AppendEntriesRequest>();
         // TODO: complete request content
+        rpc_message->set_term(currentTerm);
+        rpc_message->set_leaderid(id);
+        rpc_message->set_prevlogindex(-1);
+        rpc_message->set_prevlogterm(0);
+        rpc_message->set_leadercommit(false);
         rpc->send(cluster, rpc_message);
     }
 }

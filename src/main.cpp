@@ -67,7 +67,7 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
     priority_queue<RPCDeferMessage> mq;
     service.set_callback([&insts, &mq](const string &from, const string &to, shared_ptr<Message> message) {
         const double drop_rate = 0.3;
-        const int delay = 50;
+        const int delay = 200;
         if (1.0 * std::rand() / RAND_MAX <= drop_rate) {
             // BOOST_LOG_TRIVIAL(trace) << "rpc message dropped";
             return;
