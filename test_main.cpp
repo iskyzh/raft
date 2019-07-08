@@ -2,7 +2,7 @@
 // Created by Alex Chi on 2019-07-04.
 //
 
-#include "raft.hpp"
+#include "src/raft.cpp"
 #include "gtest/gtest.h"
 
 TEST(GTest, Works) {
