@@ -655,11 +655,11 @@ class AppendEntriesReply :
   ::PROTOBUF_NAMESPACE_ID::uint32 success() const;
   void set_success(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
-  // uint32 lastAgreedLogIndex = 3;
-  void clear_lastagreedlogindex();
-  static const int kLastAgreedLogIndexFieldNumber = 3;
-  ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedlogindex() const;
-  void set_lastagreedlogindex(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // uint32 lastAgreedIndex = 3;
+  void clear_lastagreedindex();
+  static const int kLastAgreedIndexFieldNumber = 3;
+  ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedindex() const;
+  void set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
   // @@protoc_insertion_point(class_scope:AppendEntriesReply)
  private:
@@ -668,7 +668,7 @@ class AppendEntriesReply :
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
   ::PROTOBUF_NAMESPACE_ID::uint32 term_;
   ::PROTOBUF_NAMESPACE_ID::uint32 success_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedlogindex_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedindex_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_raft_2eproto;
 };
@@ -1002,18 +1002,18 @@ inline void AppendEntriesReply::set_success(::PROTOBUF_NAMESPACE_ID::uint32 valu
   // @@protoc_insertion_point(field_set:AppendEntriesReply.success)
 }
 
-// uint32 lastAgreedLogIndex = 3;
-inline void AppendEntriesReply::clear_lastagreedlogindex() {
-  lastagreedlogindex_ = 0u;
+// uint32 lastAgreedIndex = 3;
+inline void AppendEntriesReply::clear_lastagreedindex() {
+  lastagreedindex_ = 0u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 AppendEntriesReply::lastagreedlogindex() const {
-  // @@protoc_insertion_point(field_get:AppendEntriesReply.lastAgreedLogIndex)
-  return lastagreedlogindex_;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 AppendEntriesReply::lastagreedindex() const {
+  // @@protoc_insertion_point(field_get:AppendEntriesReply.lastAgreedIndex)
+  return lastagreedindex_;
 }
-inline void AppendEntriesReply::set_lastagreedlogindex(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void AppendEntriesReply::set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   
-  lastagreedlogindex_ = value;
-  // @@protoc_insertion_point(field_set:AppendEntriesReply.lastAgreedLogIndex)
+  lastagreedindex_ = value;
+  // @@protoc_insertion_point(field_set:AppendEntriesReply.lastAgreedIndex)
 }
 
 #ifdef __GNUC__

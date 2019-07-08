@@ -24,7 +24,7 @@ message AppendEntriesRequest {
 message AppendEntriesReply {
     uint32 term = 1;
     uint32 success = 2;
-    uint32 lastAgreedLogIndex = 3;
+    uint32 lastAgreedIndex = 3;
 }
 
 service Raft {

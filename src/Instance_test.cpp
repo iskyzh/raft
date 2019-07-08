@@ -108,12 +108,31 @@ TEST(Follower, NotVoteForCandidateOfLowerTerm) {
     instance.update();
     EXPECT_EQ(instance.role, Role::FOLLOWER);
     __tick = 1000;
-    instance.currentTerm = 1;
+    instance.current_term = 1;
     instance.on_rpc("test1", make_vote_request("test1", 0));
     instance.update();
     EXPECT_EQ(instance.role, Role::FOLLOWER);
 
     EXPECT_FALSE(voted_for(service, "test", "test1"));
+}
+
+TEST(Follower, NotVoteTwice) {
+    MockRPCService service;
+    Instance instance("test", service.get_client("test"));
+
+    __tick = 500;
+    instance.start();
+    __tick = 600;
+    instance.update();
+    EXPECT_EQ(instance.role, Role::FOLLOWER);
+    __tick = 1000;
+    instance.on_rpc("test1", make_vote_request("test1"));
+    instance.on_rpc("test2", make_vote_request("test2"));
+    instance.update();
+    EXPECT_EQ(instance.role, Role::FOLLOWER);
+
+    EXPECT_TRUE(voted_for(service, "test", "test1"));
+    EXPECT_FALSE(voted_for(service, "test", "test2"));
 }
 
 // TODO: not vote for candidate with fewer log
@@ -142,7 +161,7 @@ TEST(Candidate, ShouldRestartElection) {
     __tick = 500;
     instance.update();
 
-    EXPECT_EQ(instance.currentTerm, 2);
+    EXPECT_EQ(instance.current_term, 2);
 }
 
 TEST(Candidate, BeginElection) {
@@ -153,7 +172,7 @@ TEST(Candidate, BeginElection) {
     __tick = 0;
     instance.as_candidate();
     EXPECT_EQ(*instance.voted_for, "test");
-    EXPECT_EQ(instance.currentTerm, 1);
+    EXPECT_EQ(instance.current_term, 1);
 
     bool request_vote_sent = false;
     for (auto &&message : service.message_queue) {
@@ -174,10 +193,10 @@ TEST(Candidate, ShouldBecomeLeader) {
     set_test_clusters(instance);
     instance.as_candidate();
 
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test2", make_vote_reply("test2", instance.currentTerm));
-    instance.on_rpc("test3", make_vote_reply("test3", instance.currentTerm));
-    instance.on_rpc("test4", make_vote_reply("test4", instance.currentTerm));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test2", make_vote_reply("test2", instance.current_term));
+    instance.on_rpc("test3", make_vote_reply("test3", instance.current_term));
+    instance.on_rpc("test4", make_vote_reply("test4", instance.current_term));
 
     EXPECT_EQ(instance.role, LEADER);
 }
@@ -190,13 +209,13 @@ TEST(Candidate, ShouldNotBecomeLeader) {
     set_test_clusters(instance);
     instance.as_candidate();
 
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test1", make_vote_reply("test1", instance.currentTerm));
-    instance.on_rpc("test2", make_vote_reply("test2", instance.currentTerm, false));
-    instance.on_rpc("test3", make_vote_reply("test3", instance.currentTerm, false));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test2", make_vote_reply("test2", instance.current_term, false));
+    instance.on_rpc("test3", make_vote_reply("test3", instance.current_term, false));
 
     EXPECT_EQ(instance.role, CANDIDATE);
 }
@@ -211,7 +230,7 @@ TEST(Candidate, ShouldFallbackToFollower) {
     instance.on_rpc("test1", make_vote_reply("test1", 3, false));
 
     EXPECT_EQ(instance.role, FOLLOWER);
-    EXPECT_EQ(instance.currentTerm, 3);
+    EXPECT_EQ(instance.current_term, 3);
 }
 
 TEST(Candidate, ShouldFallbackToFollowerWhenAppend) {
@@ -221,7 +240,7 @@ TEST(Candidate, ShouldFallbackToFollowerWhenAppend) {
     set_test_clusters(instance);
     instance.as_candidate();
 
-    instance.on_rpc("test1", make_append_entry("test0", instance.currentTerm));
+    instance.on_rpc("test1", make_append_entry("test0", instance.current_term));
 
     EXPECT_EQ(instance.role, FOLLOWER);
 }
@@ -237,7 +256,7 @@ TEST(Leader, ShouldFallbackToFollower) {
     instance.on_rpc("test1", make_vote_reply("test1", 3, false));
 
     EXPECT_EQ(instance.role, FOLLOWER);
-    EXPECT_EQ(instance.currentTerm, 3);
+    EXPECT_EQ(instance.current_term, 3);
 }
 
 bool append_entry_to(MockRPCService &service, const string &to, const string &from) {

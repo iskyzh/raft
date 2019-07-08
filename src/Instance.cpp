@@ -20,7 +20,7 @@ using std::dynamic_pointer_cast;
 
 Instance::Instance(const string &id, shared_ptr<MockRPCClient> rpc) :
         role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
-        currentTerm(0) {
+        current_term(0), commit_index(0), last_applied(0) {
     std::srand(std::time(nullptr));
 }
 
@@ -65,7 +65,7 @@ void Instance::as_candidate() {
 void Instance::begin_election() {
     election_begin = get_tick();
     election_timeout = generate_timeout();
-    currentTerm++;
+    current_term++;
     voted_for.emplace(id);
     voted_for_self.clear();
     voted_for_self[id] = true;
@@ -73,7 +73,7 @@ void Instance::begin_election() {
 
     for (auto &&cluster : clusters) {
         auto rpc_message = make_shared<RequestVoteRequest>();
-        rpc_message->set_term(currentTerm);
+        rpc_message->set_term(current_term);
         rpc_message->set_candidateid(id);
         rpc_message->set_lastlogterm(logs.last_log_term());
         rpc_message->set_lastlogindex(logs.last_log_index());
@@ -97,28 +97,49 @@ unsigned Instance::cluster_size() {
 
 void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
     auto message_term = get_term(message);
-    if (message_term > currentTerm) {
-        currentTerm = message_term;
+    if (message_term > current_term) {
+        current_term = message_term;
         as_follower();
     }
     if (role == FOLLOWER) {
         follower_timeout = get_tick();
         if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
             bool grant_vote = true;
-            if (req_vote->term() < this->currentTerm) grant_vote = false;
+            if (req_vote->term() < this->current_term) grant_vote = false;
                 // not voted, or same candidate?
             else if (voted_for != none && *voted_for != req_vote->candidateid()) grant_vote = false;
                 // at least as up-to-date?
             else if (req_vote->lastlogindex() < this->logs.last_log_index()) grant_vote = false;
-
             auto vote_reply = make_shared<RequestVoteReply>();
-            vote_reply->set_term(currentTerm);
+            vote_reply->set_term(current_term);
             vote_reply->set_votegranted(grant_vote);
-
+            if (grant_vote) voted_for.emplace(req_vote->candidateid());
             rpc->send(req_vote->candidateid(), vote_reply);
+        } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
+            bool succeed = true;
+            unsigned int lst_index = req_app->prevlogindex();
+            if (req_app->term() < this->current_term) succeed = false;
+                // log doesn't match
+            else if (!logs.probe_log(req_app->prevlogindex(), req_app->prevlogterm())) succeed = false;
+            else {
+                auto next_idx = req_app->prevlogindex() + 1;
+                if (logs.exists(next_idx)) {
+                    if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
+                }
+                auto entries = req_app->entries();
+                if (entries != "" && !logs.exists(next_idx)) logs.append_log(make_pair(req_app->term(), req_app->entries()));
+                if (req_app->leadercommit() > commit_index) {
+                    commit_index = req_app->leadercommit();
+                    // TODO: apply to state machine
+                }
+                lst_index = logs.last_log_index();
+            }
+            auto app_reply = make_shared<AppendEntriesReply>();
+            app_reply->set_term(current_term);
+            app_reply->set_success(succeed);
+            app_reply->set_lastagreedindex(lst_index);
+            rpc->send(req_app->leaderid(), app_reply);
         }
-
-        // TODO: Append Entries RPC
     } else if (role == CANDIDATE) {
         if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
             if (res_vote->votegranted()) {
@@ -131,35 +152,36 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
                 }
             }
         } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
-            if (req_app->term() == currentTerm) {
+            if (req_app->term() == current_term) {
                 as_follower();
                 // TODO: reply when fallback to follower
             } else {
                 auto res_app = make_shared<AppendEntriesReply>();
-                res_app->set_term(currentTerm);
-                res_app->set_lastagreedlogindex(logs.last_log_index());
+                res_app->set_term(current_term);
+                res_app->set_lastagreedindex(logs.last_log_index());
                 res_app->set_success(false);
                 rpc->send(req_app->leaderid(), res_app);
+            }
+        }
+    } else if (role == LEADER) {
+        if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) {
+            if (res_app->success()) {
+                match_index[from] = res_app->lastagreedindex();
+                next_index[from] = res_app->lastagreedindex() + 1;
+            } else {
+                next_index[from] = res_app->lastagreedindex();
             }
         }
     }
 }
 
 unsigned int Instance::get_term(shared_ptr<Message> message) {
-    unsigned int term = -1;
-    if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
-        term = req_vote->term();
-    } else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
-        term = res_vote->term();
-    } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
-        term = req_app->term();
-    } else if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) {
-        term = res_app->term();
-    }
-    if (term == -1) {
-        assert(false);
-    }
-    return term;
+    if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) return req_vote->term();
+    else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) return res_vote->term();
+    else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) return req_app->term();
+    else if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) return res_app->term();
+    assert(false);
+    return -1;
 }
 
 void Instance::as_leader() {
@@ -167,20 +189,38 @@ void Instance::as_leader() {
     role = LEADER;
     next_index.clear();
     match_index.clear();
+    for (auto &&cluster : clusters) {
+        next_index[cluster] = logs.last_log_index() + 1;
+        match_index[cluster] = 0;
+    }
     sync_log();
 }
 
 void Instance::sync_log() {
     for (auto &&cluster : clusters) {
         auto rpc_message = make_shared<AppendEntriesRequest>();
-        // TODO: complete request content
-        rpc_message->set_term(currentTerm);
+        rpc_message->set_term(current_term);
         rpc_message->set_leaderid(id);
-        rpc_message->set_prevlogindex(-1);
-        rpc_message->set_prevlogterm(0);
-        rpc_message->set_leadercommit(false);
+        auto log_idx = next_index[cluster] - 1;
+        auto next_idx = next_index[cluster];
+        rpc_message->set_prevlogindex(log_idx);
+        rpc_message->set_prevlogterm(log_idx == -1 ? 0 : logs.logs[log_idx].first);
+        if (next_idx >= logs.logs.size()) rpc_message->set_entries("");
+        else rpc_message->set_entries(logs.logs[next_idx].second);
+        rpc_message->set_leadercommit(commit_index);
         rpc->send(cluster, rpc_message);
     }
+}
+
+void Instance::append_entry(const string &entry) {
+    logs.append_log(make_pair(current_term, entry));
+}
+
+string Instance::get_role_string() {
+    if (role == LEADER) return "leader";
+    if (role == CANDIDATE) return "candidate";
+    if (role == FOLLOWER) return "follower";
+    return "";
 }
 
 

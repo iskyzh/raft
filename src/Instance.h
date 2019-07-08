@@ -31,7 +31,7 @@ using Cluster = string;
 
 class Instance {
 public:
-    unsigned int currentTerm;
+    unsigned int current_term;
     optional<const string> voted_for;
     LogStorage logs;
     Role role;
@@ -47,6 +47,8 @@ public:
     map <Cluster, bool> voted_for_self;
     map <Cluster, unsigned int> next_index;
     map <Cluster, unsigned int> match_index;
+    unsigned int commit_index;
+    unsigned int last_applied;
 
     Instance(const string &id, shared_ptr<MockRPCClient> rpc);
 
@@ -66,6 +68,8 @@ public:
 
     void as_leader();
 
+    string get_role_string();
+
     void set_clusters(const vector<Cluster>& clusters);
 
     unsigned cluster_size();
@@ -74,7 +78,7 @@ public:
 
     unsigned int get_term(shared_ptr<Message> message);
 
-    ostream& info();
+    void append_entry(const string& entry);
 };
 
 

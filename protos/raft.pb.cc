@@ -126,7 +126,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_raft_2eproto::offsets[] PROTOB
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::AppendEntriesReply, term_),
   PROTOBUF_FIELD_OFFSET(::AppendEntriesReply, success_),
-  PROTOBUF_FIELD_OFFSET(::AppendEntriesReply, lastagreedlogindex_),
+  PROTOBUF_FIELD_OFFSET(::AppendEntriesReply, lastagreedindex_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::RequestVoteRequest)},
@@ -150,13 +150,12 @@ const char descriptor_table_protodef_raft_2eproto[] =
   "d\030\002 \001(\r\"\210\001\n\024AppendEntriesRequest\022\014\n\004term"
   "\030\001 \001(\r\022\020\n\010leaderId\030\002 \001(\t\022\024\n\014prevLogIndex"
   "\030\003 \001(\r\022\023\n\013prevLogTerm\030\004 \001(\r\022\017\n\007entries\030\005"
-  " \001(\014\022\024\n\014leaderCommit\030\006 \001(\r\"O\n\022AppendEntr"
+  " \001(\014\022\024\n\014leaderCommit\030\006 \001(\r\"L\n\022AppendEntr"
   "iesReply\022\014\n\004term\030\001 \001(\r\022\017\n\007success\030\002 \001(\r\022"
-  "\032\n\022lastAgreedLogIndex\030\003 \001(\r2~\n\004Raft\0227\n\013R"
-  "equestVote\022\023.RequestVoteRequest\032\021.Reques"
-  "tVoteReply\"\000\022=\n\rAppendEntries\022\025.AppendEn"
-  "triesRequest\032\023.AppendEntriesReply\"\000b\006pro"
-  "to3"
+  "\027\n\017lastAgreedIndex\030\003 \001(\r2~\n\004Raft\0227\n\013Requ"
+  "estVote\022\023.RequestVoteRequest\032\021.RequestVo"
+  "teReply\"\000\022=\n\rAppendEntries\022\025.AppendEntri"
+  "esRequest\032\023.AppendEntriesReply\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_raft_2eproto_deps[1] = {
 };
@@ -169,7 +168,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_raf
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_raft_2eproto_once;
 static bool descriptor_table_raft_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_raft_2eproto = {
-  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 523,
+  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 520,
   &descriptor_table_raft_2eproto_once, descriptor_table_raft_2eproto_sccs, descriptor_table_raft_2eproto_deps, 4, 0,
   schemas, file_default_instances, TableStruct_raft_2eproto::offsets,
   file_level_metadata_raft_2eproto, 4, file_level_enum_descriptors_raft_2eproto, file_level_service_descriptors_raft_2eproto,
@@ -1412,7 +1411,7 @@ class AppendEntriesReply::HasBitSetters {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int AppendEntriesReply::kTermFieldNumber;
 const int AppendEntriesReply::kSuccessFieldNumber;
-const int AppendEntriesReply::kLastAgreedLogIndexFieldNumber;
+const int AppendEntriesReply::kLastAgreedIndexFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 AppendEntriesReply::AppendEntriesReply()
@@ -1425,15 +1424,15 @@ AppendEntriesReply::AppendEntriesReply(const AppendEntriesReply& from)
       _internal_metadata_(nullptr) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&term_, &from.term_,
-    static_cast<size_t>(reinterpret_cast<char*>(&lastagreedlogindex_) -
-    reinterpret_cast<char*>(&term_)) + sizeof(lastagreedlogindex_));
+    static_cast<size_t>(reinterpret_cast<char*>(&lastagreedindex_) -
+    reinterpret_cast<char*>(&term_)) + sizeof(lastagreedindex_));
   // @@protoc_insertion_point(copy_constructor:AppendEntriesReply)
 }
 
 void AppendEntriesReply::SharedCtor() {
   ::memset(&term_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&lastagreedlogindex_) -
-      reinterpret_cast<char*>(&term_)) + sizeof(lastagreedlogindex_));
+      reinterpret_cast<char*>(&lastagreedindex_) -
+      reinterpret_cast<char*>(&term_)) + sizeof(lastagreedindex_));
 }
 
 AppendEntriesReply::~AppendEntriesReply() {
@@ -1460,8 +1459,8 @@ void AppendEntriesReply::Clear() {
   (void) cached_has_bits;
 
   ::memset(&term_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&lastagreedlogindex_) -
-      reinterpret_cast<char*>(&term_)) + sizeof(lastagreedlogindex_));
+      reinterpret_cast<char*>(&lastagreedindex_) -
+      reinterpret_cast<char*>(&term_)) + sizeof(lastagreedindex_));
   _internal_metadata_.Clear();
 }
 
@@ -1487,10 +1486,10 @@ const char* AppendEntriesReply::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 lastAgreedLogIndex = 3;
+      // uint32 lastAgreedIndex = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
-          lastagreedlogindex_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          lastagreedindex_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1550,13 +1549,13 @@ bool AppendEntriesReply::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 lastAgreedLogIndex = 3;
+      // uint32 lastAgreedIndex = 3;
       case 3: {
         if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (24 & 0xFF)) {
 
           DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
                    ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &lastagreedlogindex_)));
+                 input, &lastagreedindex_)));
         } else {
           goto handle_unusual;
         }
@@ -1600,9 +1599,9 @@ void AppendEntriesReply::SerializeWithCachedSizes(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(2, this->success(), output);
   }
 
-  // uint32 lastAgreedLogIndex = 3;
-  if (this->lastagreedlogindex() != 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(3, this->lastagreedlogindex(), output);
+  // uint32 lastAgreedIndex = 3;
+  if (this->lastagreedindex() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(3, this->lastagreedindex(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1628,9 +1627,9 @@ void AppendEntriesReply::SerializeWithCachedSizes(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->success(), target);
   }
 
-  // uint32 lastAgreedLogIndex = 3;
-  if (this->lastagreedlogindex() != 0) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->lastagreedlogindex(), target);
+  // uint32 lastAgreedIndex = 3;
+  if (this->lastagreedindex() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->lastagreedindex(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1668,11 +1667,11 @@ size_t AppendEntriesReply::ByteSizeLong() const {
         this->success());
   }
 
-  // uint32 lastAgreedLogIndex = 3;
-  if (this->lastagreedlogindex() != 0) {
+  // uint32 lastAgreedIndex = 3;
+  if (this->lastagreedindex() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->lastagreedlogindex());
+        this->lastagreedindex());
   }
 
   int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
@@ -1708,8 +1707,8 @@ void AppendEntriesReply::MergeFrom(const AppendEntriesReply& from) {
   if (from.success() != 0) {
     set_success(from.success());
   }
-  if (from.lastagreedlogindex() != 0) {
-    set_lastagreedlogindex(from.lastagreedlogindex());
+  if (from.lastagreedindex() != 0) {
+    set_lastagreedindex(from.lastagreedindex());
   }
 }
 
@@ -1740,7 +1739,7 @@ void AppendEntriesReply::InternalSwap(AppendEntriesReply* other) {
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(term_, other->term_);
   swap(success_, other->success_);
-  swap(lastagreedlogindex_, other->lastagreedlogindex_);
+  swap(lastagreedindex_, other->lastagreedindex_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata AppendEntriesReply::GetMetadata() const {

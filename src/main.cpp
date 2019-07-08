@@ -64,13 +64,31 @@ struct RPCDeferMessage {
     }
 };
 
+
+string generate_message(int id) {
+    char s[100];
+    sprintf(s, "test%d", id);
+    return s;
+}
+
+void append_entry(vector<unique_ptr<Instance>> &insts) {
+    static unsigned message_id = 0;
+    string msg = generate_message(message_id++);
+    for (auto &&inst : insts) {
+        if (inst->role == LEADER) {
+            inst->append_entry(msg);
+            return;
+        }
+    }
+}
+
 int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &insts) {
     priority_queue<RPCDeferMessage> mq;
     service.set_callback([&insts, &mq](const string &from, const string &to, shared_ptr<Message> message) {
         const double drop_rate = 0.3;
-        const int delay = 200;
+        const int delay = 500;
         if (1.0 * std::rand() / RAND_MAX <= drop_rate) {
-            BOOST_LOG_TRIVIAL(trace) << "rpc message dropped";
+            // BOOST_LOG_TRIVIAL(trace) << "rpc message dropped";
             return;
         }
         mq.push(RPCDeferMessage(get_tick() + std::rand() % delay, from, to, message));
@@ -78,11 +96,20 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
     BOOST_LOG_TRIVIAL(info) << "starting event loop...";
     for (auto &&inst : insts) inst->start();
     auto lst_updated = get_tick();
+    auto lst_append_entry = get_tick();
     while (true) {
-        if (get_tick() - lst_updated >= 5) {
+        if (get_tick() - lst_updated >= 30) {
             lst_updated = get_tick();
             for (auto &&inst : insts) {
                 inst->update();
+            }
+        }
+        if (get_tick() - lst_append_entry >= 1000) {
+            lst_append_entry = get_tick();
+            append_entry(insts);
+            for (auto &&inst : insts) {
+                BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: " << inst->logs.logs.size();
+                inst->logs.dump();
             }
         }
         while (!mq.empty() && mq.top().should_be_sent_at < get_tick()) {
