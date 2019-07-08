@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.7)
 project(raft)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Protobuf CONFIG REQUIRED)
-find_package(GRPC CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
+find_package(GRPC REQUIRED)
 find_package(Boost COMPONENTS log REQUIRED)
 
 include_directories(protos ${Boost_INCLUDE_DIRS})

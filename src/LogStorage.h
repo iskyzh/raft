@@ -15,11 +15,13 @@ public:
     std::vector<Log> logs;
 
     unsigned int last_log_index() { return logs.size() - 1; }
+
     unsigned int last_log_term() {
         if (logs.empty()) return 0;
         else return logs.back().first;
     }
-    void append_log(const Log& log) {
+
+    void append_log(const Log &log) {
         logs.push_back(log);
     }
 };
