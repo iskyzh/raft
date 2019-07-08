@@ -173,6 +173,7 @@ void Instance::as_leader() {
 void Instance::sync_log() {
     for (auto &&cluster : clusters) {
         auto rpc_message = make_shared<AppendEntriesRequest>();
+        // TODO: complete request content
         rpc->send(cluster, rpc_message);
     }
 }

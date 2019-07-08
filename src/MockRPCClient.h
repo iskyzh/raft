@@ -8,6 +8,8 @@
 #include <string>
 
 #include "MockRPC.h"
+#include "MockRPCService.h"
+
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -26,6 +28,5 @@ public:
 
     void send(const string &to, shared_ptr<Message> message);
 };
-
 
 #endif //RAFT_MOCKRPCCLIENT_H
