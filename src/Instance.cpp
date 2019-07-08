@@ -6,6 +6,7 @@
 #include <memory>
 #include <ctime>
 #include <cstdlib>
+#include <boost/log/trivial.hpp>
 
 #include "Instance.h"
 
@@ -23,15 +24,6 @@ Instance::Instance(const string &id, shared_ptr<MockRPCClient> rpc) :
     std::srand(std::time(nullptr));
 }
 
-int Instance::run() {
-    auto request_vote_msg = std::make_unique<RequestVoteRequest>();
-    request_vote_msg->set_candidateid("test_0");
-    request_vote_msg->set_term(0);
-    request_vote_msg->set_lastlogindex(0);
-    request_vote_msg->set_lastlogterm(0);
-    return 0;
-}
-
 void Instance::update() {
     if (role == FOLLOWER) {
         if (get_tick() - follower_begin > follower_timeout) {
@@ -39,6 +31,7 @@ void Instance::update() {
         }
     } else if (role == CANDIDATE) {
         if (get_tick() - election_begin > election_timeout) {
+            BOOST_LOG_TRIVIAL(info) << id << " election timeout";
             begin_election();
         }
     } else if (role == LEADER) {
@@ -51,6 +44,7 @@ TICK Instance::generate_timeout() {
 }
 
 void Instance::as_follower() {
+    BOOST_LOG_TRIVIAL(info) << id << " become follower";
     role = FOLLOWER;
     follower_timeout = generate_timeout();
     follower_begin = get_tick();
@@ -63,6 +57,7 @@ void Instance::start() {
 }
 
 void Instance::as_candidate() {
+    BOOST_LOG_TRIVIAL(info) << id << " become candidate";
     role = CANDIDATE;
     begin_election();
 }
@@ -168,6 +163,7 @@ unsigned int Instance::get_term(shared_ptr<Message> message) {
 }
 
 void Instance::as_leader() {
+    BOOST_LOG_TRIVIAL(info) << id << " become leader";
     role = LEADER;
     next_index.clear();
     match_index.clear();
@@ -180,3 +176,5 @@ void Instance::sync_log() {
         rpc->send(cluster, rpc_message);
     }
 }
+
+

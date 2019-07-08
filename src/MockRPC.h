@@ -9,6 +9,6 @@
 #include <string>
 #include <memory>
 #include <functional>
-using on_rpc_cb = std::function<void(const std::string&, std::shared_ptr<google::protobuf::Message>)>;
+using on_rpc_cb = std::function<void(const std::string&, const std::string&, std::shared_ptr<google::protobuf::Message>)>;
 
 #endif //RAFT_MOCKRPC_H

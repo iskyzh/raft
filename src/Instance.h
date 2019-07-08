@@ -21,6 +21,7 @@ using boost::optional;
 using google::protobuf::Message;
 using std::string;
 using std::map;
+using std::ostream;
 
 enum Role {
     FOLLOWER = 0, CANDIDATE, LEADER
@@ -49,8 +50,6 @@ public:
 
     Instance(const string &id, shared_ptr<MockRPCClient> rpc);
 
-    int run();
-
     void start();
 
     void update();
@@ -74,6 +73,8 @@ public:
     void on_rpc(const string& from, shared_ptr<Message> message);
 
     unsigned int get_term(shared_ptr<Message> message);
+
+    ostream& info();
 };
 
 

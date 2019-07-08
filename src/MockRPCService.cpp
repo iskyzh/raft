@@ -11,5 +11,12 @@ unique_ptr<MockRPCClient> MockRPCService::get_client(const string &sender) {
 
 void MockRPCService::send(const string &from, const string &to, shared_ptr<Message> message) {
     message_queue.push_back(RPCMessage(from, to, message));
+    if (callback) callback(from, to, message);
 }
+
+void MockRPCService::set_callback(on_rpc_cb callback) {
+    this->callback = callback;
+}
+
+MockRPCService::MockRPCService() : callback({}) {}
 
