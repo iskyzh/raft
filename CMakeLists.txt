@@ -3,6 +3,8 @@ project(raft)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(Boost_USE_STATIC_LIBS ON)
+
 find_package(protobuf CONFIG REQUIRED)
 find_package(GTest MODULE REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
