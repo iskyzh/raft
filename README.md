@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/skyzh/raft.svg?branch=master)](https://travis-ci.com/skyzh/raft)
 
-The Raft Consensus Algorithm. This is an implementation in C++.
+The Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.io/](https://raft.github.io/) for original paper.
 
 ## Usage
 
@@ -12,8 +12,8 @@ The Raft Consensus Algorithm. This is an implementation in C++.
 
 ## Design
 
-Some changes are made on Raft RPC described in original paper.
+Some changes were made on Raft RPC described in original paper. This implementation only uses gRPC as a communication tool, which means that we could not correspond a response to a request. Therefore, for `AppendEntries` RPC, prevLogTerm in request should be known when sending AppendEntries reply. Therefore a `lastAgreedLogIndex` field was added.
 
-This implementation only use gRPC as a communication tool, which means that we could not correspond a response to a request.
+Personally I would like to break down Raft protocol to many small parts as it is more convenient to test.
 
-For `AppendEntries` RPC, since prevLogTerm in request should be known, I add `lastAgreedLogIndex` field to record that information.
+This branch now only contains core Raft algorithm. All RPCs are simulated with callbacks. Later I'll add gRPC and make system tests with real world network and application.

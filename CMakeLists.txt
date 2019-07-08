@@ -8,7 +8,7 @@ find_package(GTest MODULE REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(Boost COMPONENTS log REQUIRED)
 
-include_directories(protos ${Boost_INCLUDE_DIRS})
+include_directories(protos ${GTEST_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(protos protos/raft.pb.cc protos/raft.grpc.pb.cc)
 add_library(raft src/Instance.cpp src/Instance.h src/LogStorage.cpp src/LogStorage.h src/MockRPCService.cpp src/MockRPCService.h src/MockRPCClient.cpp src/MockRPCClient.h src/MockRPC.h src/utils.h)
