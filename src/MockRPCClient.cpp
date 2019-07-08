@@ -5,5 +5,9 @@
 #include "MockRPCClient.h"
 #include "MockRPCService.h"
 
-MockRPCClient::MockRPCClient(MockRPCService* service, const string& id, on_rpc_cb callback)
-    : service(service), id(id), callback(callback) {}
+MockRPCClient::MockRPCClient(MockRPCService *service, const string &id)
+        : service(service), id(id) {}
+
+void MockRPCClient::send(const string &to, shared_ptr<Message> message) {
+    service->send(id, to, message);
+}

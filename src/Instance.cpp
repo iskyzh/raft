@@ -14,6 +14,7 @@
 
 using boost::none;
 using std::string;
+using std::make_shared;
 
 Instance::Instance(const string &id, shared_ptr<MockRPCClient> rpc) :
     role(FOLLOWER), votedFor(none), id(id), rpc(rpc),
@@ -68,7 +69,12 @@ void Instance::begin_election(TICK tick) {
     election_vote_cnt = 1;
 
     for (auto&& cluster : clusters) {
-        std::cerr << cluster << std::endl;
+        auto rpc_message = make_shared<RequestVoteRequest>();
+        rpc_message->set_term(currentTerm);
+        rpc_message->set_candidateid(id);
+        rpc_message->set_lastlogterm(logs.last_log_term());
+        rpc_message->set_lastlogindex(logs.last_log_index());
+        rpc->send(cluster, rpc_message);
     }
 }
 

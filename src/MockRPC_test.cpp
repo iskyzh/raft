@@ -22,8 +22,8 @@ TEST(MockRPC, Construct) {
     MockRPCService service;
     MockInstance inst;
     auto cb = bind(&MockInstance::on_rpc, &inst, _1, _2);
-    EXPECT_NE(service.get_client("test0", cb), nullptr);
-    EXPECT_EQ(service.get_client("test0", cb)->id, "test0");
+    EXPECT_NE(service.get_client("test0"), nullptr);
+    EXPECT_EQ(service.get_client("test0")->id, "test0");
 }
 
 TEST(MockRPC, SendMessage) {

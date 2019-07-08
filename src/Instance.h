@@ -60,6 +60,8 @@ public:
 
     unsigned cluster_size();
 
+    void on_rpc(const string& from, shared_ptr<Message> message);
+
     unique_ptr<Message> on_rpc();
 };
 

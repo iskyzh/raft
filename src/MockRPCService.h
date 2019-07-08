@@ -22,12 +22,17 @@ class MockRPCClient;
 
 class MockRPCService {
 public:
-    using message = pair<string, shared_ptr<Message>>;
-    vector<message> message_queue;
+    struct RPCMessage {
+        const string from, to;
+        shared_ptr<Message> message;
+        RPCMessage(const string& from, const string& to, shared_ptr<Message> message)
+            : from(from), to(to), message(message) {}
+    };
+    vector<RPCMessage> message_queue;
 
-    unique_ptr<MockRPCClient> get_client(const string &sender, on_rpc_cb callback);
+    unique_ptr<MockRPCClient> get_client(const string &sender);
 
-    void send(const string &sender, shared_ptr<Message> message);
+    void send(const string &from, const string& to, shared_ptr<Message> message);
 };
 
 

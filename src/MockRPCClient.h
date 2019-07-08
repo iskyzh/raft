@@ -9,17 +9,22 @@
 
 #include "MockRPC.h"
 
+using std::shared_ptr;
+using std::unique_ptr;
+using std::string;
+using google::protobuf::Message;
 using std::string;
 
 class MockRPCService;
 
 class MockRPCClient {
 public:
-    MockRPCService* service;
+    MockRPCService *service;
     const string id;
-    on_rpc_cb callback;
 
-    MockRPCClient(MockRPCService* service, const string& id, on_rpc_cb callback);
+    MockRPCClient(MockRPCService *service, const string &id);
+
+    void send(const string &to, shared_ptr<Message> message);
 };
 
 
