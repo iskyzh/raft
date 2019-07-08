@@ -20,7 +20,7 @@ void set_test_clusters(Instance &instance) {
 TEST(Instance, Construct) {
     Instance instance("test", nullptr);
     EXPECT_EQ(instance.id, "test");
-    EXPECT_EQ(instance.votedFor, boost::none);
+    EXPECT_EQ(instance.voted_for, boost::none);
 }
 
 TEST(Instance, GenerateTimeout) {
@@ -56,6 +56,16 @@ shared_ptr<Message> make_vote_reply(const string &from, int term = 0, bool vote_
     auto message = make_shared<RequestVoteReply>();
     message->set_votegranted(vote_granted);
     message->set_term(term);
+    return message;
+}
+
+shared_ptr<Message> make_append_entry(const string &from, int term = 0, int prevLogIndex = 0, int prevLogTerm = 0) {
+    auto message = make_shared<AppendEntriesRequest>();
+    message->set_term(term);
+    message->set_leaderid(from);
+    message->set_prevlogindex(prevLogIndex);
+    message->set_prevlogterm(prevLogTerm);
+    message->set_leadercommit(false);
     return message;
 }
 
@@ -142,7 +152,7 @@ TEST(Candidate, BeginElection) {
     set_test_clusters(instance);
     __tick = 0;
     instance.as_candidate();
-    EXPECT_EQ(*instance.votedFor, "test");
+    EXPECT_EQ(*instance.voted_for, "test");
     EXPECT_EQ(instance.currentTerm, 1);
 
     bool request_vote_sent = false;
@@ -201,6 +211,19 @@ TEST(Candidate, ShouldFallbackToFollower) {
     instance.on_rpc("test1", make_vote_reply("test1", 3, false));
 
     EXPECT_EQ(instance.role, FOLLOWER);
+    EXPECT_EQ(instance.currentTerm, 3);
+}
+
+TEST(Candidate, ShouldFallbackToFollowerWhenAppend) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+
+    set_test_clusters(instance);
+    instance.as_candidate();
+
+    instance.on_rpc("test1", make_append_entry("test0", instance.currentTerm));
+
+    EXPECT_EQ(instance.role, FOLLOWER);
 }
 
 // Leader tests
@@ -214,4 +237,29 @@ TEST(Leader, ShouldFallbackToFollower) {
     instance.on_rpc("test1", make_vote_reply("test1", 3, false));
 
     EXPECT_EQ(instance.role, FOLLOWER);
+    EXPECT_EQ(instance.currentTerm, 3);
+}
+
+bool append_entry_to(MockRPCService &service, const string &to, const string &from) {
+    for (auto &&message : service.message_queue) {
+        if (message.from == from && message.to == to) {
+            auto rpc = dynamic_pointer_cast<AppendEntriesRequest>(message.message);
+            if (rpc) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+TEST(Leader, ShouldHeartbeatUponElection) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+    set_test_clusters(instance);
+    instance.as_leader();
+    EXPECT_TRUE(append_entry_to(service, "test1", "test0"));
+    EXPECT_TRUE(append_entry_to(service, "test2", "test0"));
+    EXPECT_TRUE(append_entry_to(service, "test3", "test0"));
+    EXPECT_TRUE(append_entry_to(service, "test4", "test0"));
 }

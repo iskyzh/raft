@@ -18,7 +18,7 @@ using std::make_shared;
 using std::dynamic_pointer_cast;
 
 Instance::Instance(const string &id, shared_ptr<MockRPCClient> rpc) :
-        role(FOLLOWER), votedFor(none), id(id), rpc(rpc),
+        role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
         currentTerm(0) {
     std::srand(std::time(nullptr));
 }
@@ -41,6 +41,8 @@ void Instance::update() {
         if (get_tick() - election_begin > election_timeout) {
             begin_election();
         }
+    } else if (role == LEADER) {
+        sync_log();
     }
 }
 
@@ -52,6 +54,8 @@ void Instance::as_follower() {
     role = FOLLOWER;
     follower_timeout = generate_timeout();
     follower_begin = get_tick();
+    // TODO: not sure
+    voted_for = none;
 }
 
 void Instance::start() {
@@ -67,7 +71,7 @@ void Instance::begin_election() {
     election_begin = get_tick();
     election_timeout = generate_timeout();
     currentTerm++;
-    votedFor.emplace(id);
+    voted_for.emplace(id);
     voted_for_self.clear();
     voted_for_self[id] = true;
     election_vote_cnt = 1;
@@ -97,7 +101,9 @@ unsigned Instance::cluster_size() {
 }
 
 void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
-    if (high_term(message)) {
+    auto message_term = get_term(message);
+    if (message_term > currentTerm) {
+        currentTerm = message_term;
         as_follower();
     }
     if (role == FOLLOWER) {
@@ -106,7 +112,7 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
             bool grant_vote = true;
             if (req_vote->term() < this->currentTerm) grant_vote = false;
                 // not voted, or same candidate?
-            else if (votedFor != none && *votedFor != req_vote->candidateid()) grant_vote = false;
+            else if (voted_for != none && *voted_for != req_vote->candidateid()) grant_vote = false;
                 // at least as up-to-date?
             else if (req_vote->lastlogindex() < this->logs.last_log_index()) grant_vote = false;
 
@@ -125,15 +131,26 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
                     voted_for_self[from] = true;
                     ++election_vote_cnt;
                     if (election_vote_cnt > cluster_size() / 2) {
-                        role = LEADER;
+                        as_leader();
                     }
                 }
+            }
+        } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
+            if (req_app->term() == currentTerm) {
+                as_follower();
+                // TODO: reply when fallback to follower
+            } else {
+                auto res_app = make_shared<AppendEntriesReply>();
+                res_app->set_term(currentTerm);
+                res_app->set_lastagreedlogindex(logs.last_log_index());
+                res_app->set_success(false);
+                rpc->send(req_app->leaderid(), res_app);
             }
         }
     }
 }
 
-bool Instance::high_term(shared_ptr<Message> message) {
+unsigned int Instance::get_term(shared_ptr<Message> message) {
     unsigned int term = -1;
     if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
         term = req_vote->term();
@@ -146,11 +163,20 @@ bool Instance::high_term(shared_ptr<Message> message) {
     }
     if (term == -1) {
         assert(false);
-        return false;
     }
-    return term > currentTerm;
+    return term;
 }
 
 void Instance::as_leader() {
     role = LEADER;
+    next_index.clear();
+    match_index.clear();
+    sync_log();
+}
+
+void Instance::sync_log() {
+    for (auto &&cluster : clusters) {
+        auto rpc_message = make_shared<AppendEntriesRequest>();
+        rpc->send(cluster, rpc_message);
+    }
 }

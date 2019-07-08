@@ -31,7 +31,7 @@ using Cluster = string;
 class Instance {
 public:
     unsigned int currentTerm;
-    optional<const string> votedFor;
+    optional<const string> voted_for;
     LogStorage logs;
     Role role;
     const string id;
@@ -44,6 +44,8 @@ public:
     TICK election_begin;
     unsigned election_vote_cnt;
     map <Cluster, bool> voted_for_self;
+    map <Cluster, unsigned int> next_index;
+    map <Cluster, unsigned int> match_index;
 
     Instance(const string &id, shared_ptr<MockRPCClient> rpc);
 
@@ -53,9 +55,11 @@ public:
 
     void update();
 
-    TICK generate_timeout();
+    static TICK generate_timeout();
 
     void begin_election();
+
+    void sync_log();
 
     void as_follower();
 
@@ -69,7 +73,7 @@ public:
 
     void on_rpc(const string& from, shared_ptr<Message> message);
 
-    bool high_term(shared_ptr<Message> message);
+    unsigned int get_term(shared_ptr<Message> message);
 };
 
 
