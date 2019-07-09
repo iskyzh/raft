@@ -16,4 +16,6 @@ Some changes were made on Raft RPC described in original paper. This implementat
 
 Personally I would like to break down Raft protocol to many small parts as it is more convenient to test.
 
-This branch now only contains core Raft algorithm. All RPCs are simulated with callbacks. Later I'll add gRPC and make system tests with real world network and application.
+`core/` contains core Raft algorithm.
+`rpc/` contains one RPC implementation with gRPC.
+In `src/`, `mock_main.cpp` can be used to mock RPC network with events, and `grpc_main.cpp` uses gRPC for communication between clients.
