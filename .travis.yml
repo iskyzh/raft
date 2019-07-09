@@ -16,6 +16,7 @@ script:
   - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
+  - pip3 install toml
   - RAFT_EXECUTABLE=RaftMain ../tests/test.py
 env:
   - BUILD_TYPE=DEBUG

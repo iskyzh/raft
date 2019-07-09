@@ -30,7 +30,7 @@ clusters = {"test1": "23333",
 config = { "server": {}, "clusters": [] }
 
 for (k, v) in clusters.items():
-    config["clusters"].append({ "name": k, "addr": "127.0.0.1:%s" % v })
+    config["clusters"].append({"name": k, "addr": "127.0.0.1:%s" % v})
 
 for (k, v) in clusters.items():
     config["server"]["name"] = k
@@ -45,34 +45,30 @@ logging.info('config generation complete')
 
 raft_threads = {}
 
-def bootstrap_client(config_path):
-    logging.error(subprocess.run([executable, config_path]))
+
+def bootstrap_client(instance_name, config_path):
+    logging.info("%s started" % instance_name)
+    subprocess.run([executable, config_path])
+    logging.info("%s detached" % instance_name)
+
 
 for (k, v) in clusters.items():
     config_path = os.path.abspath("%s_config.toml" % k)
     logging.info('running %s with config %s' % (k, config_path))
-    thread = threading.Thread(target=bootstrap_client, args=(config_path,))
+    thread = threading.Thread(target=bootstrap_client, args=(k, config_path,))
     thread.start()
     raft_threads[k] = thread
 
-for (k, thread) in raft_threads.items():
-    thread.join()
+try:
+    for (k, thread) in raft_threads.items():
+        thread.join()
+except KeyboardInterrupt:
+    pass
 
-class TestStringMethods(unittest.TestCase):
+class TestRaftSetupAndTeardown(unittest.TestCase):
 
     def test_upper(self):
         self.assertEqual('foo'.upper(), 'FOO')
-
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
 
 
 if __name__ == '__main__':
