@@ -1,6 +1,6 @@
 [server]
 name="test0"
-addr="0.0.0.0:23333"
+addr="127.0.0.1:23333"
 
 [[clusters]]
 name="test0"

@@ -17,6 +17,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/lockfree/queue.hpp>
 #include "../core/RPCClient.h"
+#include "../core/MockRPCService.h"
 
 #include "raft.grpc.pb.h"
 

@@ -7,6 +7,7 @@
 #include "../rpc/grpc_client.hpp"
 #include "../core/Instance.h"
 #include "../utils/utils.h"
+#include "../core/MockRPCService.h"
 
 string generate_message(int id) {
     char s[100];
@@ -41,6 +42,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
             inst->on_rpc(rpc->from, rpc->message);
             delete rpc;
         }
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
     }
     return 0;
 }
@@ -80,12 +82,13 @@ int main(int argc, char **argv) {
 
     auto client = make_shared<RaftRPCClient>(*server_name, *server_addr, route);
     auto instance = make_shared<Instance>(*server_name, client);
+    instance->set_clusters(clusters);
 
     thread server_thread([client]() { client->run_server(); });
     thread event_thread([instance, client] { start_event_loop(instance, client); });
 
-    server_thread.join();
     event_thread.join();
+    server_thread.join();
 
     return 0;
 }
