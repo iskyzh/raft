@@ -65,16 +65,19 @@ public:
     }
 
     Status OnRequestVote(ServerContext *context, const RequestVoteReply *request, Void *response) override {
+        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<RequestVoteReply>(*request)));
         return Status::OK;
     }
 
     Status AppendEntries(ServerContext *context, const AppendEntriesRequest *request, Void *response) override {
+        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<AppendEntriesRequest>(*request)));
         return Status::OK;
     }
 
     Status OnAppendEntries(ServerContext *context, const AppendEntriesReply *request, Void *response) override {
+        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<AppendEntriesReply>(*request)));
         return Status::OK;
     }
@@ -100,10 +103,14 @@ public:
         server->Wait();
     }
 
-    void dispatch_send(const string &to, shared_ptr<Message> message) {
+    void dispatch_send(const string to, shared_ptr<Message> message) {
         ClientContext context;
         Void reply;
         Status status;
+        if (stub.find(to) == stub.end()) {
+            BOOST_LOG_TRIVIAL(error) << "rpc destination unreachable";
+            return;
+        }
         if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
             status = stub[to]->RequestVote(&context, *req_vote, &reply);
         } else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
@@ -120,6 +127,7 @@ public:
 
     void send(const string &to, shared_ptr<Message> message) override {
         thread send_thread(&RaftRPCClient::dispatch_send, this, to, message);
+        send_thread.detach();
     }
 
     string server_addr;
