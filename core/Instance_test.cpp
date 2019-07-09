@@ -56,6 +56,7 @@ shared_ptr<Message> make_vote_reply(const string &from, int term = 0, bool vote_
     auto message = make_shared<RequestVoteReply>();
     message->set_votegranted(vote_granted);
     message->set_term(term);
+    message->set_from(from);
     return message;
 }
 
