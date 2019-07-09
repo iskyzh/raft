@@ -18,7 +18,7 @@ using std::string;
 using std::make_shared;
 using std::dynamic_pointer_cast;
 
-Instance::Instance(const string &id, shared_ptr<MockRPCClient> rpc) :
+Instance::Instance(const string &id, shared_ptr<RPCClient> rpc) :
         role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
         current_term(0), commit_index(0), last_applied(0) {
     std::srand(std::time(nullptr));

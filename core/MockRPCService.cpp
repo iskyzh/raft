@@ -13,7 +13,7 @@
 using std::dynamic_pointer_cast;
 using google::protobuf::TextFormat;
 
-unique_ptr<MockRPCClient> MockRPCService::get_client(const string &sender) {
+unique_ptr<RPCClient> MockRPCService::get_client(const string &sender) {
     return std::make_unique<MockRPCClient>(this, sender);
 }
 

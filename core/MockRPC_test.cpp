@@ -6,6 +6,7 @@
 #include "MockRPCService.h"
 #include "MockRPCClient.h"
 #include <string>
+#include <memory>
 
 class MockInstance {
 public:
@@ -23,7 +24,8 @@ TEST(MockRPC, Construct) {
     MockInstance inst;
     auto cb = bind(&MockInstance::on_rpc, &inst, _1, _2);
     EXPECT_NE(service.get_client("test0"), nullptr);
-    EXPECT_EQ(service.get_client("test0")->id, "test0");
+    auto client = dynamic_cast<MockRPCClient*>(&(*service.get_client("test0")));
+    EXPECT_EQ(client->id, "test0");
 }
 
 TEST(MockRPC, SendMessage) {

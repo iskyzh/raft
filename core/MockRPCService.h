@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "MockRPC.h"
+#include "RPC.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -18,7 +18,7 @@ using std::vector;
 using std::pair;
 using google::protobuf::Message;
 
-class MockRPCClient;
+class RPCClient;
 
 class MockRPCService {
 public:
@@ -36,7 +36,7 @@ public:
 
     vector<RPCMessage> message_queue;
 
-    unique_ptr<MockRPCClient> get_client(const string &sender);
+    unique_ptr<RPCClient> get_client(const string &sender);
 
     void send(const string &from, const string &to, shared_ptr<Message> message);
 

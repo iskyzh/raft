@@ -47,7 +47,7 @@ struct TableStruct_raft_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[4]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -66,14 +66,137 @@ extern RequestVoteReplyDefaultTypeInternal _RequestVoteReply_default_instance_;
 class RequestVoteRequest;
 class RequestVoteRequestDefaultTypeInternal;
 extern RequestVoteRequestDefaultTypeInternal _RequestVoteRequest_default_instance_;
+class Void;
+class VoidDefaultTypeInternal;
+extern VoidDefaultTypeInternal _Void_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::AppendEntriesReply* Arena::CreateMaybeMessage<::AppendEntriesReply>(Arena*);
 template<> ::AppendEntriesRequest* Arena::CreateMaybeMessage<::AppendEntriesRequest>(Arena*);
 template<> ::RequestVoteReply* Arena::CreateMaybeMessage<::RequestVoteReply>(Arena*);
 template<> ::RequestVoteRequest* Arena::CreateMaybeMessage<::RequestVoteRequest>(Arena*);
+template<> ::Void* Arena::CreateMaybeMessage<::Void>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 // ===================================================================
+
+class Void :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Void) */ {
+ public:
+  Void();
+  virtual ~Void();
+
+  Void(const Void& from);
+  Void(Void&& from) noexcept
+    : Void() {
+    *this = ::std::move(from);
+  }
+
+  inline Void& operator=(const Void& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Void& operator=(Void&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Void& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Void* internal_default_instance() {
+    return reinterpret_cast<const Void*>(
+               &_Void_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  void Swap(Void* other);
+  friend void swap(Void& a, Void& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Void* New() const final {
+    return CreateMaybeMessage<Void>(nullptr);
+  }
+
+  Void* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Void>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Void& from);
+  void MergeFrom(const Void& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Void* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Void";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_raft_2eproto);
+    return ::descriptor_table_raft_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:Void)
+ private:
+  class HasBitSetters;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_raft_2eproto;
+};
+// -------------------------------------------------------------------
 
 class RequestVoteRequest :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:RequestVoteRequest) */ {
@@ -117,7 +240,7 @@ class RequestVoteRequest :
                &_RequestVoteRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    1;
 
   void Swap(RequestVoteRequest* other);
   friend void swap(RequestVoteRequest& a, RequestVoteRequest& b) {
@@ -270,7 +393,7 @@ class RequestVoteReply :
                &_RequestVoteReply_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   void Swap(RequestVoteReply* other);
   friend void swap(RequestVoteReply& a, RequestVoteReply& b) {
@@ -337,15 +460,27 @@ class RequestVoteReply :
 
   // accessors -------------------------------------------------------
 
-  // uint32 term = 1;
+  // string from = 1;
+  void clear_from();
+  static const int kFromFieldNumber = 1;
+  const std::string& from() const;
+  void set_from(const std::string& value);
+  void set_from(std::string&& value);
+  void set_from(const char* value);
+  void set_from(const char* value, size_t size);
+  std::string* mutable_from();
+  std::string* release_from();
+  void set_allocated_from(std::string* from);
+
+  // uint32 term = 2;
   void clear_term();
-  static const int kTermFieldNumber = 1;
+  static const int kTermFieldNumber = 2;
   ::PROTOBUF_NAMESPACE_ID::uint32 term() const;
   void set_term(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
-  // uint32 voteGranted = 2;
+  // uint32 voteGranted = 3;
   void clear_votegranted();
-  static const int kVoteGrantedFieldNumber = 2;
+  static const int kVoteGrantedFieldNumber = 3;
   ::PROTOBUF_NAMESPACE_ID::uint32 votegranted() const;
   void set_votegranted(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
@@ -354,6 +489,7 @@ class RequestVoteReply :
   class HasBitSetters;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr from_;
   ::PROTOBUF_NAMESPACE_ID::uint32 term_;
   ::PROTOBUF_NAMESPACE_ID::uint32 votegranted_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -403,7 +539,7 @@ class AppendEntriesRequest :
                &_AppendEntriesRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   void Swap(AppendEntriesRequest* other);
   friend void swap(AppendEntriesRequest& a, AppendEntriesRequest& b) {
@@ -576,7 +712,7 @@ class AppendEntriesReply :
                &_AppendEntriesReply_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   void Swap(AppendEntriesReply* other);
   friend void swap(AppendEntriesReply& a, AppendEntriesReply& b) {
@@ -643,21 +779,33 @@ class AppendEntriesReply :
 
   // accessors -------------------------------------------------------
 
-  // uint32 term = 1;
+  // string from = 1;
+  void clear_from();
+  static const int kFromFieldNumber = 1;
+  const std::string& from() const;
+  void set_from(const std::string& value);
+  void set_from(std::string&& value);
+  void set_from(const char* value);
+  void set_from(const char* value, size_t size);
+  std::string* mutable_from();
+  std::string* release_from();
+  void set_allocated_from(std::string* from);
+
+  // uint32 term = 2;
   void clear_term();
-  static const int kTermFieldNumber = 1;
+  static const int kTermFieldNumber = 2;
   ::PROTOBUF_NAMESPACE_ID::uint32 term() const;
   void set_term(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
-  // uint32 success = 2;
+  // uint32 success = 3;
   void clear_success();
-  static const int kSuccessFieldNumber = 2;
+  static const int kSuccessFieldNumber = 3;
   ::PROTOBUF_NAMESPACE_ID::uint32 success() const;
   void set_success(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
-  // uint32 lastAgreedIndex = 3;
+  // uint32 lastAgreedIndex = 4;
   void clear_lastagreedindex();
-  static const int kLastAgreedIndexFieldNumber = 3;
+  static const int kLastAgreedIndexFieldNumber = 4;
   ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedindex() const;
   void set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
@@ -666,6 +814,7 @@ class AppendEntriesReply :
   class HasBitSetters;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr from_;
   ::PROTOBUF_NAMESPACE_ID::uint32 term_;
   ::PROTOBUF_NAMESPACE_ID::uint32 success_;
   ::PROTOBUF_NAMESPACE_ID::uint32 lastagreedindex_;
@@ -681,6 +830,10 @@ class AppendEntriesReply :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// Void
+
+// -------------------------------------------------------------------
+
 // RequestVoteRequest
 
 // uint32 term = 1;
@@ -780,7 +933,58 @@ inline void RequestVoteRequest::set_lastlogterm(::PROTOBUF_NAMESPACE_ID::uint32 
 
 // RequestVoteReply
 
-// uint32 term = 1;
+// string from = 1;
+inline void RequestVoteReply::clear_from() {
+  from_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& RequestVoteReply::from() const {
+  // @@protoc_insertion_point(field_get:RequestVoteReply.from)
+  return from_.GetNoArena();
+}
+inline void RequestVoteReply::set_from(const std::string& value) {
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:RequestVoteReply.from)
+}
+inline void RequestVoteReply::set_from(std::string&& value) {
+  
+  from_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:RequestVoteReply.from)
+}
+inline void RequestVoteReply::set_from(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:RequestVoteReply.from)
+}
+inline void RequestVoteReply::set_from(const char* value, size_t size) {
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:RequestVoteReply.from)
+}
+inline std::string* RequestVoteReply::mutable_from() {
+  
+  // @@protoc_insertion_point(field_mutable:RequestVoteReply.from)
+  return from_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* RequestVoteReply::release_from() {
+  // @@protoc_insertion_point(field_release:RequestVoteReply.from)
+  
+  return from_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void RequestVoteReply::set_allocated_from(std::string* from) {
+  if (from != nullptr) {
+    
+  } else {
+    
+  }
+  from_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from);
+  // @@protoc_insertion_point(field_set_allocated:RequestVoteReply.from)
+}
+
+// uint32 term = 2;
 inline void RequestVoteReply::clear_term() {
   term_ = 0u;
 }
@@ -794,7 +998,7 @@ inline void RequestVoteReply::set_term(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:RequestVoteReply.term)
 }
 
-// uint32 voteGranted = 2;
+// uint32 voteGranted = 3;
 inline void RequestVoteReply::clear_votegranted() {
   votegranted_ = 0u;
 }
@@ -974,7 +1178,58 @@ inline void AppendEntriesRequest::set_leadercommit(::PROTOBUF_NAMESPACE_ID::uint
 
 // AppendEntriesReply
 
-// uint32 term = 1;
+// string from = 1;
+inline void AppendEntriesReply::clear_from() {
+  from_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& AppendEntriesReply::from() const {
+  // @@protoc_insertion_point(field_get:AppendEntriesReply.from)
+  return from_.GetNoArena();
+}
+inline void AppendEntriesReply::set_from(const std::string& value) {
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:AppendEntriesReply.from)
+}
+inline void AppendEntriesReply::set_from(std::string&& value) {
+  
+  from_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:AppendEntriesReply.from)
+}
+inline void AppendEntriesReply::set_from(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:AppendEntriesReply.from)
+}
+inline void AppendEntriesReply::set_from(const char* value, size_t size) {
+  
+  from_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:AppendEntriesReply.from)
+}
+inline std::string* AppendEntriesReply::mutable_from() {
+  
+  // @@protoc_insertion_point(field_mutable:AppendEntriesReply.from)
+  return from_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* AppendEntriesReply::release_from() {
+  // @@protoc_insertion_point(field_release:AppendEntriesReply.from)
+  
+  return from_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void AppendEntriesReply::set_allocated_from(std::string* from) {
+  if (from != nullptr) {
+    
+  } else {
+    
+  }
+  from_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from);
+  // @@protoc_insertion_point(field_set_allocated:AppendEntriesReply.from)
+}
+
+// uint32 term = 2;
 inline void AppendEntriesReply::clear_term() {
   term_ = 0u;
 }
@@ -988,7 +1243,7 @@ inline void AppendEntriesReply::set_term(::PROTOBUF_NAMESPACE_ID::uint32 value) 
   // @@protoc_insertion_point(field_set:AppendEntriesReply.term)
 }
 
-// uint32 success = 2;
+// uint32 success = 3;
 inline void AppendEntriesReply::clear_success() {
   success_ = 0u;
 }
@@ -1002,7 +1257,7 @@ inline void AppendEntriesReply::set_success(::PROTOBUF_NAMESPACE_ID::uint32 valu
   // @@protoc_insertion_point(field_set:AppendEntriesReply.success)
 }
 
-// uint32 lastAgreedIndex = 3;
+// uint32 lastAgreedIndex = 4;
 inline void AppendEntriesReply::clear_lastagreedindex() {
   lastagreedindex_ = 0u;
 }
@@ -1019,6 +1274,8 @@ inline void AppendEntriesReply::set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uin
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

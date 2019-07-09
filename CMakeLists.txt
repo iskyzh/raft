@@ -13,16 +13,19 @@ find_package(Boost COMPONENTS log REQUIRED)
 include_directories(protos ${GTEST_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(protos protos/raft.pb.cc protos/raft.grpc.pb.cc)
-add_library(core core/Instance.cpp core/Instance.h core/LogStorage.cpp core/LogStorage.h core/MockRPCService.cpp core/MockRPCService.h core/MockRPCClient.cpp core/MockRPCClient.h core/MockRPC.h utils/utils.h)
+add_library(core core/Instance.cpp core/Instance.h core/LogStorage.cpp core/LogStorage.h core/MockRPCService.cpp core/MockRPCService.h core/MockRPCClient.cpp core/MockRPCClient.h core/RPC.h utils/utils.h core/RPCClient.h)
 target_link_libraries(core protos ${Boost_LIBRARIES}
         protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite
         gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet)
 
-add_executable(RaftMain src/main.cpp utils/utils.cpp)
+add_executable(RaftMain src/mock_main.cpp utils/utils.cpp)
 target_link_libraries(RaftMain core)
 
 add_executable(RaftTest core/LogStorage_test.cpp core/Instance_test.cpp core/MockRPC_test.cpp utils/utils_mock.cpp src/test_main.cpp)
 target_link_libraries(RaftTest PRIVATE core GTest::GTest GTest::Main)
+
+add_executable(RaftRPC src/grpc_main.cpp utils/utils.cpp rpc/grpc_client.hpp)
+target_link_libraries(RaftRPC core)
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)

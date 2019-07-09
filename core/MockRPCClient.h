@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include "MockRPC.h"
+#include "RPC.h"
 #include "MockRPCService.h"
-
+#include "RPCClient.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -19,14 +19,14 @@ using std::string;
 
 class MockRPCService;
 
-class MockRPCClient {
+class MockRPCClient : public RPCClient {
 public:
     MockRPCService *service;
     const string id;
 
     MockRPCClient(MockRPCService *service, const string &id);
 
-    void send(const string &to, shared_ptr<Message> message);
+    void send(const string &to, shared_ptr<Message> message) override ;
 };
 
 #endif //RAFT_MOCKRPCCLIENT_H

@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+message Void {}
+
 message RequestVoteRequest {
     uint32 term = 1;
     string candidateId = 2;
@@ -8,8 +10,9 @@ message RequestVoteRequest {
 }
 
 message RequestVoteReply {
-    uint32 term = 1;
-    uint32 voteGranted = 2;
+    string from = 1;
+    uint32 term = 2;
+    uint32 voteGranted = 3;
 }
 
 message AppendEntriesRequest {
@@ -22,12 +25,17 @@ message AppendEntriesRequest {
 }
 
 message AppendEntriesReply {
-    uint32 term = 1;
-    uint32 success = 2;
-    uint32 lastAgreedIndex = 3;
+    string from = 1;
+    uint32 term = 2;
+    uint32 success = 3;
+    uint32 lastAgreedIndex = 4;
 }
 
+// One-way RPC
+
 service Raft {
-    rpc RequestVote (RequestVoteRequest) returns (RequestVoteReply) {}
-    rpc AppendEntries (AppendEntriesRequest) returns (AppendEntriesReply) {}
+    rpc RequestVote (RequestVoteRequest) returns (Void) {}
+    rpc OnRequestVote (RequestVoteReply) returns (Void) {}
+    rpc AppendEntries (AppendEntriesRequest) returns (Void) {}
+    rpc OnAppendEntries (AppendEntriesReply) returns (Void) {}
 }

@@ -12,7 +12,7 @@
 
 #include "../utils/utils.h"
 #include "LogStorage.h"
-#include "MockRPCClient.h"
+#include "RPCClient.h"
 
 using std::shared_ptr;
 using std::unique_ptr;
@@ -36,7 +36,7 @@ public:
     LogStorage logs;
     Role role;
     const string id;
-    shared_ptr<MockRPCClient> rpc;
+    shared_ptr<RPCClient> rpc;
     vector<Cluster> clusters;
     vector<Cluster> clusters_including_self;
     TICK follower_timeout;
@@ -50,7 +50,7 @@ public:
     unsigned int commit_index;
     unsigned int last_applied;
 
-    Instance(const string &id, shared_ptr<MockRPCClient> rpc);
+    Instance(const string &id, shared_ptr<RPCClient> rpc);
 
     void start();
 
