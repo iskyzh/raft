@@ -4,10 +4,10 @@
 
 #include <cpptoml.h>
 
-#include "../rpc/grpc_client.hpp"
-#include "../core/Instance.h"
-#include "../utils/utils.h"
-#include "../core/MockRPCService.h"
+#include "rpc/grpc_client.hpp"
+#include "core/Instance.h"
+#include "utils/utils.h"
+#include "core/MockRPCService.h"
 
 string generate_message(int id) {
     char s[100];
@@ -48,12 +48,20 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
 }
 
 int main(int argc, char **argv) {
+    namespace logging = boost::log;
+    if (argc == 3 && strcmp(argv[2], "--verbose") == 0)
+        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
+    else
+        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::error);
+
     const char *config_path = "config.toml";
-    if (argc == 2) { config_path = argv[1]; }
+    if (argc >= 2) { config_path = argv[1]; }
 
     BOOST_LOG_TRIVIAL(trace) << "loading config from " << config_path;
 
     auto config = cpptoml::parse_file(config_path);
+
+    auto log_level = config->get_qualified_as<int>("server.log_level");
     auto tclusters = config->get_table_array("clusters");
 
     map<string, string> route;

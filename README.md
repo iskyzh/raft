@@ -9,6 +9,7 @@ The Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.i
 1. Use vcpkg or other tools to install dependencies including `grpc`, `protobuf`, `boost`, `gtest`.
 2. Generate protobuf header with protos/generate.sh
 3. Build and run
+4. Use python to run system test
 
 ## Design
 

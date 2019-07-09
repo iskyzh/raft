@@ -6,9 +6,9 @@
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
-#include "../core/MockRPCService.h"
-#include "../core/Instance.h"
-#include "../utils/utils.h"
+#include "core/MockRPCService.h"
+#include "core/Instance.h"
+#include "utils/utils.h"
 
 using std::vector;
 using std::priority_queue;

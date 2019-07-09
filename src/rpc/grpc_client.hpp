@@ -105,7 +105,7 @@ public:
         Void reply;
         Status status;
         if (stub.find(to) == stub.end()) {
-            BOOST_LOG_TRIVIAL(error) << "rpc destination unreachable";
+            BOOST_LOG_TRIVIAL(warning) << "rpc destination unreachable";
             return;
         }
         if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
@@ -118,7 +118,7 @@ public:
             status = stub[to]->OnAppendEntries(&context, *res_app, &reply);
         }
         if (!status.ok()) {
-            BOOST_LOG_TRIVIAL(error) << "rpc call failed";
+            BOOST_LOG_TRIVIAL(warning) << "rpc call failed";
         }
     }
 

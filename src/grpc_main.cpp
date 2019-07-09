@@ -2,9 +2,9 @@
 // Created by Alex Chi on 2019-07-09.
 //
 
-#include "../rpc/grpc_client.hpp"
-#include "../core/Instance.h"
-#include "../utils/utils.h"
+#include "rpc/grpc_client.hpp"
+#include "core/Instance.h"
+#include "utils/utils.h"
 
 string generate_message(int id) {
     char s[100];

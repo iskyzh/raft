@@ -48,7 +48,7 @@ raft_threads = {}
 
 def bootstrap_client(instance_name, config_path):
     logging.info("%s started" % instance_name)
-    subprocess.run([executable, config_path])
+    subprocess.run([executable, config_path, "--verbose"])
     logging.info("%s detached" % instance_name)
 
 
@@ -73,3 +73,4 @@ class TestRaftSetupAndTeardown(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    
