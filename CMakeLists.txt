@@ -18,14 +18,17 @@ target_link_libraries(core protos ${Boost_LIBRARIES}
         protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite
         gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet)
 
-add_executable(RaftMain src/mock_main.cpp utils/utils.cpp)
-target_link_libraries(RaftMain core)
+add_executable(RaftMockMain src/mock_main.cpp utils/utils.cpp)
+target_link_libraries(RaftMockMain core)
 
 add_executable(RaftTest core/LogStorage_test.cpp core/Instance_test.cpp core/MockRPC_test.cpp utils/utils_mock.cpp src/test_main.cpp)
 target_link_libraries(RaftTest PRIVATE core GTest::GTest GTest::Main)
 
-add_executable(RaftRPC src/grpc_main.cpp utils/utils.cpp rpc/grpc_client.hpp)
-target_link_libraries(RaftRPC core)
+add_executable(RaftMockRPC src/grpc_main.cpp utils/utils.cpp rpc/grpc_client.hpp)
+target_link_libraries(RaftMockRPC core)
+
+add_executable(RaftMain src/service_main.cpp utils/utils.cpp)
+target_link_libraries(RaftMain core)
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)

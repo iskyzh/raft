@@ -78,8 +78,8 @@ public:
         return Status::OK;
     }
 
-    RaftRPCClient(const string &server_addr, const map<string, string> &clusters)
-            : server_addr(server_addr), q(65536), clusters(clusters) {
+    RaftRPCClient(const string& id, const string &server_addr, const map<string, string> &clusters)
+            : id(id), server_addr(server_addr), q(65536), clusters(clusters) {
         for (auto &&kv : clusters) {
             auto channel = grpc::CreateChannel(
                     kv.second,
@@ -88,14 +88,14 @@ public:
         }
     }
 
-    RaftRPCClient() : RaftRPCClient("127.0.0.1:23333", map<string, string>()) {}
+    RaftRPCClient() : RaftRPCClient("test", "127.0.0.1:23333", map<string, string>()) {}
 
     void run_server() {
         ServerBuilder builder;
         builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
         builder.RegisterService(this);
         unique_ptr<Server> server(builder.BuildAndStart());
-        BOOST_LOG_TRIVIAL(info) << "server listening on " << server_addr;
+        BOOST_LOG_TRIVIAL(info) << id << " server listening on " << server_addr;
         server->Wait();
     }
 
@@ -126,7 +126,7 @@ public:
         send_thread.detach();
     }
 
-    string server_addr;
+    string server_addr, id;
     map<string, unique_ptr<Raft::Stub>> stub;
     map<string, string> clusters;
 };

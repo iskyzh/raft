@@ -13,7 +13,7 @@ string generate_message(int id) {
 }
 
 int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client) {
-    BOOST_LOG_TRIVIAL(info) << "starting event loop...";
+    BOOST_LOG_TRIVIAL(info) << inst->id << " starting event loop...";
     inst->start();
     auto lst_updated = get_tick();
     auto lst_append_entry = get_tick();
@@ -60,7 +60,7 @@ int main() {
     for (auto &&kv : route) {
         auto &&client_name = kv.first;
         auto &&client_ip = kv.second;
-        auto client = make_shared<RaftRPCClient>(client_ip, route);
+        auto client = make_shared<RaftRPCClient>(client_name, client_ip, route);
         clients[client_name] = client;
         auto instance = make_shared<Instance>(client_name, client);
         instance->set_clusters(clusters);
