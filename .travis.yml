@@ -13,7 +13,7 @@ before_script:
   - cd vcpkg && ./vcpkg install gtest grpc protobuf cpptoml && rm -rf buildtrees
 script:
   - popd
-  - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
+  - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
   - RAFT_EXECUTABLE=RaftMain ../tests/test.py
