@@ -6,7 +6,13 @@
 #include "../core/Instance.h"
 #include "../utils/utils.h"
 
-int start_event_loop(shared_ptr<Instance> inst) {
+string generate_message(int id) {
+    char s[100];
+    sprintf(s, "test%d", id);
+    return s;
+}
+
+int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client) {
     BOOST_LOG_TRIVIAL(info) << "starting event loop...";
     inst->start();
     auto lst_updated = get_tick();
@@ -15,6 +21,24 @@ int start_event_loop(shared_ptr<Instance> inst) {
         if (get_tick() - lst_updated >= 30) {
             lst_updated = get_tick();
             inst->update();
+        }
+        if (get_tick() - lst_append_entry >= 1000) {
+            lst_append_entry = get_tick();
+            BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
+                                    << inst->logs.logs.size();
+            // inst->logs.dump();
+
+            if (inst->role == LEADER) {
+                static unsigned message_id = 0;
+                string msg = generate_message(message_id++);
+                inst->append_entry(msg);
+                BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append entry";
+            }
+        }
+        RaftRPCClient::RPCMessage *rpc;
+        while (client->q.pop(rpc)) {
+            inst->on_rpc(rpc->from, rpc->message);
+            delete rpc;
         }
     }
     return 0;
@@ -45,7 +69,8 @@ int main() {
         threads.push_back(std::move(server_thread));
     }
     for (auto &&instance : instances) {
-        thread event_thread([instance] { start_event_loop(instance.second); });
+        auto client = clients[instance.first];
+        thread event_thread([instance, client] { start_event_loop(instance.second, client); });
         threads.push_back(std::move(event_thread));
     }
     for (auto &t : threads) {

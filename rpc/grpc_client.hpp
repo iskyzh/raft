@@ -59,25 +59,21 @@ public:
     queue<RPCMessage *> q;
 
     Status RequestVote(ServerContext *context, const RequestVoteRequest *request, Void *response) override {
-        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<RequestVoteRequest>(*request)));
         return Status::OK;
     }
 
     Status OnRequestVote(ServerContext *context, const RequestVoteReply *request, Void *response) override {
-        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<RequestVoteReply>(*request)));
         return Status::OK;
     }
 
     Status AppendEntries(ServerContext *context, const AppendEntriesRequest *request, Void *response) override {
-        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<AppendEntriesRequest>(*request)));
         return Status::OK;
     }
 
     Status OnAppendEntries(ServerContext *context, const AppendEntriesReply *request, Void *response) override {
-        std::cerr << context->peer() << std::endl;
         q.push(RPCMessage::build(context->peer(), make_shared<AppendEntriesReply>(*request)));
         return Status::OK;
     }

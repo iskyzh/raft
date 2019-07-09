@@ -72,12 +72,12 @@ void Instance::begin_election() {
     election_vote_cnt = 1;
 
     for (auto &&cluster : clusters) {
-        auto rpc_message = make_shared<RequestVoteRequest>();
-        rpc_message->set_term(current_term);
-        rpc_message->set_candidateid(id);
-        rpc_message->set_lastlogterm(logs.last_log_term());
-        rpc_message->set_lastlogindex(logs.last_log_index());
-        rpc->send(cluster, rpc_message);
+        auto req_vote = make_shared<RequestVoteRequest>();
+        req_vote->set_term(current_term);
+        req_vote->set_candidateid(id);
+        req_vote->set_lastlogterm(logs.last_log_term());
+        req_vote->set_lastlogindex(logs.last_log_index());
+        rpc->send(cluster, req_vote);
     }
 }
 
@@ -95,7 +95,7 @@ unsigned Instance::cluster_size() {
     return clusters_including_self.size();
 }
 
-void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
+void Instance::on_rpc(const string &, shared_ptr<Message> message) {
     auto message_term = get_term(message);
     if (message_term > current_term) {
         current_term = message_term;
@@ -110,11 +110,12 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
             else if (voted_for != none && *voted_for != req_vote->candidateid()) grant_vote = false;
                 // at least as up-to-date?
             else if (req_vote->lastlogindex() < this->logs.last_log_index()) grant_vote = false;
-            auto vote_reply = make_shared<RequestVoteReply>();
-            vote_reply->set_term(current_term);
-            vote_reply->set_votegranted(grant_vote);
+            auto res_vote = make_shared<RequestVoteReply>();
+            res_vote->set_term(current_term);
+            res_vote->set_votegranted(grant_vote);
+            res_vote->set_from(id);
             if (grant_vote) voted_for.emplace(req_vote->candidateid());
-            rpc->send(req_vote->candidateid(), vote_reply);
+            rpc->send(req_vote->candidateid(), res_vote);
         } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
             bool succeed = true;
             unsigned int lst_index = req_app->prevlogindex();
@@ -134,17 +135,18 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
                 }
                 lst_index = logs.last_log_index();
             }
-            auto app_reply = make_shared<AppendEntriesReply>();
-            app_reply->set_term(current_term);
-            app_reply->set_success(succeed);
-            app_reply->set_lastagreedindex(lst_index);
-            rpc->send(req_app->leaderid(), app_reply);
+            auto res_app = make_shared<AppendEntriesReply>();
+            res_app->set_term(current_term);
+            res_app->set_success(succeed);
+            res_app->set_lastagreedindex(lst_index);
+            res_app->set_from(id);
+            rpc->send(req_app->leaderid(), res_app);
         }
     } else if (role == CANDIDATE) {
         if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
             if (res_vote->votegranted()) {
-                if (!voted_for_self[from]) {
-                    voted_for_self[from] = true;
+                if (!voted_for_self[res_vote->from()]) {
+                    voted_for_self[res_vote->from()] = true;
                     ++election_vote_cnt;
                     if (election_vote_cnt > cluster_size() / 2) {
                         as_leader();
@@ -160,16 +162,17 @@ void Instance::on_rpc(const string &from, shared_ptr<Message> message) {
                 res_app->set_term(current_term);
                 res_app->set_lastagreedindex(logs.last_log_index());
                 res_app->set_success(false);
+                res_app->set_from(id);
                 rpc->send(req_app->leaderid(), res_app);
             }
         }
     } else if (role == LEADER) {
         if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) {
             if (res_app->success()) {
-                match_index[from] = res_app->lastagreedindex();
-                next_index[from] = res_app->lastagreedindex() + 1;
+                match_index[res_app->from()] = res_app->lastagreedindex();
+                next_index[res_app->from()] = res_app->lastagreedindex() + 1;
             } else {
-                next_index[from] = res_app->lastagreedindex();
+                next_index[res_app->from()] = res_app->lastagreedindex();
             }
         }
     }
@@ -198,17 +201,17 @@ void Instance::as_leader() {
 
 void Instance::sync_log() {
     for (auto &&cluster : clusters) {
-        auto rpc_message = make_shared<AppendEntriesRequest>();
-        rpc_message->set_term(current_term);
-        rpc_message->set_leaderid(id);
+        auto req_app = make_shared<AppendEntriesRequest>();
+        req_app->set_term(current_term);
+        req_app->set_leaderid(id);
         auto log_idx = next_index[cluster] - 1;
         auto next_idx = next_index[cluster];
-        rpc_message->set_prevlogindex(log_idx);
-        rpc_message->set_prevlogterm(log_idx == -1 ? 0 : logs.logs[log_idx].first);
-        if (next_idx >= logs.logs.size()) rpc_message->set_entries("");
-        else rpc_message->set_entries(logs.logs[next_idx].second);
-        rpc_message->set_leadercommit(commit_index);
-        rpc->send(cluster, rpc_message);
+        req_app->set_prevlogindex(log_idx);
+        req_app->set_prevlogterm(log_idx == -1 ? 0 : logs.logs[log_idx].first);
+        if (next_idx >= logs.logs.size()) req_app->set_entries("");
+        else req_app->set_entries(logs.logs[next_idx].second);
+        req_app->set_leadercommit(commit_index);
+        rpc->send(cluster, req_app);
     }
 }
 
