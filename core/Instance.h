@@ -10,7 +10,7 @@
 #include <google/protobuf/message.h>
 #include <boost/optional.hpp>
 
-#include "utils.h"
+#include "../utils/utils.h"
 #include "LogStorage.h"
 #include "MockRPCClient.h"
 
