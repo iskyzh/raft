@@ -42,7 +42,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
             inst->on_rpc(rpc->from, rpc->message);
             delete rpc;
         }
-        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     return 0;
 }
