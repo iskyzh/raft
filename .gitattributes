@@ -1,2 +1,4 @@
-protos/*.h linguist-vendored
-protos/*.cc linguist-vendored
+protos/raft.grpc.pb.h linguist-vendored
+protos/raft.pb.h linguist-vendored
+protos/raft.grpc.pb.cc linguist-vendored
+protos/raft.pb.cc linguist-vendored
