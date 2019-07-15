@@ -204,3 +204,106 @@ Raft::Service::~Service() {
 }
 
 
+static const char* Client_method_names[] = {
+  "/Client/AppendLog",
+  "/Client/RequestLog",
+};
+
+std::unique_ptr< Client::Stub> Client::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< Client::Stub> stub(new Client::Stub(channel));
+  return stub;
+}
+
+Client::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
+  : channel_(channel), rpcmethod_AppendLog_(Client_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RequestLog_(Client_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status Client::Stub::AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::AppendLogReply* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_AppendLog_, context, request, response);
+}
+
+void Client::Stub::experimental_async::AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AppendLog_, context, request, response, std::move(f));
+}
+
+void Client::Stub::experimental_async::AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AppendLog_, context, request, response, std::move(f));
+}
+
+void Client::Stub::experimental_async::AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AppendLog_, context, request, response, reactor);
+}
+
+void Client::Stub::experimental_async::AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AppendLog_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::AppendLogReply>* Client::Stub::AsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::AppendLogReply>::Create(channel_.get(), cq, rpcmethod_AppendLog_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::AppendLogReply>* Client::Stub::PrepareAsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::AppendLogReply>::Create(channel_.get(), cq, rpcmethod_AppendLog_, context, request, false);
+}
+
+::grpc::Status Client::Stub::RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::RequestLogReply* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_RequestLog_, context, request, response);
+}
+
+void Client::Stub::experimental_async::RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestLog_, context, request, response, std::move(f));
+}
+
+void Client::Stub::experimental_async::RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_RequestLog_, context, request, response, std::move(f));
+}
+
+void Client::Stub::experimental_async::RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestLog_, context, request, response, reactor);
+}
+
+void Client::Stub::experimental_async::RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_RequestLog_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::RequestLogReply>* Client::Stub::AsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::RequestLogReply>::Create(channel_.get(), cq, rpcmethod_RequestLog_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::RequestLogReply>* Client::Stub::PrepareAsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::RequestLogReply>::Create(channel_.get(), cq, rpcmethod_RequestLog_, context, request, false);
+}
+
+Client::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Client_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Client::Service, ::AppendLogRequest, ::AppendLogReply>(
+          std::mem_fn(&Client::Service::AppendLog), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Client_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Client::Service, ::RequestLogRequest, ::RequestLogReply>(
+          std::mem_fn(&Client::Service::RequestLog), this)));
+}
+
+Client::Service::~Service() {
+}
+
+::grpc::Status Client::Service::AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Client::Service::RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+

@@ -21,9 +21,9 @@
 #include <grpcpp/impl/codegen/sync_stream.h>
 
 namespace grpc_impl {
-class Channel;
 class CompletionQueue;
 class ServerCompletionQueue;
+class ServerContext;
 }  // namespace grpc_impl
 
 namespace grpc {
@@ -31,10 +31,6 @@ namespace experimental {
 template <typename RequestT, typename ResponseT>
 class MessageAllocator;
 }  // namespace experimental
-}  // namespace grpc_impl
-
-namespace grpc {
-class ServerContext;
 }  // namespace grpc
 
 // One-way RPC
@@ -728,6 +724,375 @@ class Raft final {
   typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_OnRequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_OnAppendEntries<Service > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
   typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_OnRequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_OnAppendEntries<Service > > > > StreamedService;
+};
+
+class Client final {
+ public:
+  static constexpr char const* service_full_name() {
+    return "Client";
+  }
+  class StubInterface {
+   public:
+    virtual ~StubInterface() {}
+    virtual ::grpc::Status AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::AppendLogReply* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>> AsyncAppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>>(AsyncAppendLogRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>> PrepareAsyncAppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>>(PrepareAsyncAppendLogRaw(context, request, cq));
+    }
+    virtual ::grpc::Status RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::RequestLogReply* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>> AsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>>(AsyncRequestLogRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>> PrepareAsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>>(PrepareAsyncRequestLogRaw(context, request, cq));
+    }
+    class experimental_async_interface {
+     public:
+      virtual ~experimental_async_interface() {}
+      virtual void AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+    };
+    virtual class experimental_async_interface* experimental_async() { return nullptr; }
+  private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>* AsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>* PrepareAsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>* AsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>* PrepareAsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
+  };
+  class Stub final : public StubInterface {
+   public:
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
+    ::grpc::Status AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::AppendLogReply* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::AppendLogReply>> AsyncAppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::AppendLogReply>>(AsyncAppendLogRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::AppendLogReply>> PrepareAsyncAppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::AppendLogReply>>(PrepareAsyncAppendLogRaw(context, request, cq));
+    }
+    ::grpc::Status RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::RequestLogReply* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>> AsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>>(AsyncRequestLogRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>> PrepareAsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>>(PrepareAsyncRequestLogRaw(context, request, cq));
+    }
+    class experimental_async final :
+      public StubInterface::experimental_async_interface {
+     public:
+      void AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, std::function<void(::grpc::Status)>) override;
+      void AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, std::function<void(::grpc::Status)>) override;
+      void AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void AppendLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::AppendLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) override;
+      void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) override;
+      void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+     private:
+      friend class Stub;
+      explicit experimental_async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class experimental_async_interface* experimental_async() override { return &async_stub_; }
+
+   private:
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class experimental_async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::AppendLogReply>* AsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::AppendLogReply>* PrepareAsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::RequestLogReply>* AsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::RequestLogReply>* PrepareAsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_AppendLog_;
+    const ::grpc::internal::RpcMethod rpcmethod_RequestLog_;
+  };
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+
+  class Service : public ::grpc::Service {
+   public:
+    Service();
+    virtual ~Service();
+    virtual ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response);
+    virtual ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithAsyncMethod_AppendLog() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAppendLog(::grpc::ServerContext* context, ::AppendLogRequest* request, ::grpc::ServerAsyncResponseWriter< ::AppendLogReply>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithAsyncMethod_RequestLog() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRequestLog(::grpc::ServerContext* context, ::RequestLogRequest* request, ::grpc::ServerAsyncResponseWriter< ::RequestLogReply>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_AppendLog<WithAsyncMethod_RequestLog<Service > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_AppendLog() {
+      ::grpc::Service::experimental().MarkMethodCallback(0,
+        new ::grpc::internal::CallbackUnaryHandler< ::AppendLogRequest, ::AppendLogReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::AppendLogRequest* request,
+                 ::AppendLogReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->AppendLog(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_AppendLog(
+        ::grpc::experimental::MessageAllocator< ::AppendLogRequest, ::AppendLogReply>* allocator) {
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::AppendLogRequest, ::AppendLogReply>*>(
+          ::grpc::Service::experimental().GetHandler(0))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_RequestLog() {
+      ::grpc::Service::experimental().MarkMethodCallback(1,
+        new ::grpc::internal::CallbackUnaryHandler< ::RequestLogRequest, ::RequestLogReply>(
+          [this](::grpc::ServerContext* context,
+                 const ::RequestLogRequest* request,
+                 ::RequestLogReply* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->RequestLog(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_RequestLog(
+        ::grpc::experimental::MessageAllocator< ::RequestLogRequest, ::RequestLogReply>* allocator) {
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::RequestLogRequest, ::RequestLogReply>*>(
+          ::grpc::Service::experimental().GetHandler(1))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  typedef ExperimentalWithCallbackMethod_AppendLog<ExperimentalWithCallbackMethod_RequestLog<Service > > ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_AppendLog() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_RequestLog() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_AppendLog() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAppendLog(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_RequestLog() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRequestLog(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_AppendLog() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(0,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->AppendLog(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AppendLog(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_RequestLog() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(1,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->RequestLog(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void RequestLog(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_AppendLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithStreamedUnaryMethod_AppendLog() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler< ::AppendLogRequest, ::AppendLogReply>(std::bind(&WithStreamedUnaryMethod_AppendLog<BaseClass>::StreamedAppendLog, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_AppendLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAppendLog(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::AppendLogRequest,::AppendLogReply>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_RequestLog : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithStreamedUnaryMethod_RequestLog() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler< ::RequestLogRequest, ::RequestLogReply>(std::bind(&WithStreamedUnaryMethod_RequestLog<BaseClass>::StreamedRequestLog, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_RequestLog() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedRequestLog(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::RequestLogRequest,::RequestLogReply>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<Service > > StreamedUnaryService;
+  typedef Service SplitStreamedService;
+  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<Service > > StreamedService;
 };
 
 

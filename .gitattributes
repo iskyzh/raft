@@ -1,0 +1,2 @@
+protos/*.h linguist-vendored
+protos/*.cc linguist-vendored

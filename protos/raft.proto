@@ -39,3 +39,13 @@ service Raft {
     rpc AppendEntries (AppendEntriesRequest) returns (Void) {}
     rpc OnAppendEntries (AppendEntriesReply) returns (Void) {}
 }
+
+message AppendLogRequest {}
+message AppendLogReply {}
+message RequestLogRequest {}
+message RequestLogReply {}
+
+service Client {
+    rpc AppendLog (AppendLogRequest) returns (AppendLogReply) {}
+    rpc RequestLog (RequestLogRequest) returns (RequestLogReply) {}
+}
