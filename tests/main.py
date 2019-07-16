@@ -10,6 +10,10 @@ import time
 import threading
 import utils
 
+verbose = False
+if os.environ.get("VERBOSE"):
+    verbose = True
+    
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 if not 'RAFT_EXECUTABLE' in os.environ:
     logging.error('raft service executable not found')
@@ -51,7 +55,10 @@ raft_threads = {}
 
 def bootstrap_client(instance_name, config_path):
     logging.debug("%s started" % instance_name)
-    subprocess.run([executable, config_path])
+    args = [executable, config_path]
+    if verbose:
+        args = [executable, config_path, "--verbose"]
+    subprocess.run(args)
     logging.debug("%s detached" % instance_name)
 
 def spawn_client_thread(id):
@@ -81,17 +88,19 @@ class TestRaftControlRPCs(unittest.TestCase):
     def setUp(self):
         for (k, v) in clusters.items():
             spawn_client_thread(k)
-        time.sleep(1)
+        time.sleep(3)
 
     def tearDown(self):
         for (k, v) in clusters.items():
             kick_off(k)
+        time.sleep(3)
         
     def test_select_leader(self):
         self.assertIsNotNone(find_leader())
 
     def test_sync_log(self):
         leader = find_leader()
+        self.assertIsNotNone(leader)
         append_log(leader, "test1")
         append_log(leader, "test2")
         append_log(leader, "test3")
@@ -101,6 +110,29 @@ class TestRaftControlRPCs(unittest.TestCase):
         log3 = request_log("test3").logs
         log4 = request_log("test4").logs
         log5 = request_log("test5").logs
+        self.assertEqual(log1, ["test1", "test2", "test3"])
+        self.assertEqual(log2, ["test1", "test2", "test3"])
+        self.assertEqual(log3, ["test1", "test2", "test3"])
+        self.assertEqual(log4, ["test1", "test2", "test3"])
+        self.assertEqual(log5, ["test1", "test2", "test3"])
+
+    @unittest.skip("this test will fail")   
+    def test_sync_log_after_leader_kickoff(self):
+        leader = find_leader()
+        self.assertIsNotNone(leader)
+        append_log(leader, "test1")
+        append_log(leader, "test2")
+        append_log(leader, "test3")
+        time.sleep(3)
+        kick_off(leader)
+        spawn_client_thread(leader)
+        time.sleep(3)
+        log1 = request_log("test1").logs
+        log2 = request_log("test2").logs
+        log3 = request_log("test3").logs
+        log4 = request_log("test4").logs
+        log5 = request_log("test5").logs
+        self.assertEqual(leader, ["test1", "test2", "test3"])
         self.assertEqual(log1, ["test1", "test2", "test3"])
         self.assertEqual(log2, ["test1", "test2", "test3"])
         self.assertEqual(log3, ["test1", "test2", "test3"])

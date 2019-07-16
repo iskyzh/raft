@@ -22,7 +22,7 @@ public:
 
     Status AppendLog(grpc::ServerContext *context, const AppendLogRequest *request,
                      AppendLogReply *response) override {
-        client->q.push(new ControlEvent(ControlEvent::APPEND, request->logd()));
+        client->q.push(new ControlEvent(ControlEvent::APPEND, request->log()));
         return Status::OK;
     }
 
