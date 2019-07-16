@@ -8,9 +8,9 @@ import toml
 import signal
 import time
 import threading
+import utils
 
-logging.basicConfig(level=logging.DEBUG)
-
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 if not 'RAFT_EXECUTABLE' in os.environ:
     logging.error('raft service executable not found')
     exit()
@@ -32,45 +32,53 @@ config = { "server": {}, "clusters": [] }
 for (k, v) in clusters.items():
     config["clusters"].append({"name": k, "addr": "127.0.0.1:%s" % v})
 
-for (k, v) in clusters.items():
-    config["server"]["name"] = k
-    config["server"]["addr"] = "127.0.0.1:%s" % v
-    dump_config = toml.dumps(config)
-    f = open("%s_config.toml" % k, "w")
-    f.write(dump_config)
-    f.close()
-    logging.debug('config for %s generated' % k)
+def generate_config():
+    for (k, v) in clusters.items():
+        config["server"]["name"] = k
+        config["server"]["addr"] = "127.0.0.1:%s" % v
+        dump_config = toml.dumps(config)
+        f = open("%s_config.toml" % k, "w")
+        f.write(dump_config)
+        f.close()
+        logging.debug('config for %s generated' % k)
 
-logging.info('config generation complete')
+    logging.info('config generation complete')
 
 raft_threads = {}
 
-
 def bootstrap_client(instance_name, config_path):
-    logging.info("%s started" % instance_name)
-    subprocess.run([executable, config_path, "--verbose"])
-    logging.info("%s detached" % instance_name)
+    logging.debug("%s started" % instance_name)
+    subprocess.run([executable, config_path])
+    logging.debug("%s detached" % instance_name)
 
-
-for (k, v) in clusters.items():
-    config_path = os.path.abspath("%s_config.toml" % k)
-    logging.info('running %s with config %s' % (k, config_path))
-    thread = threading.Thread(target=bootstrap_client, args=(k, config_path,))
+def spawn_client_thread(id):
+    config_path = os.path.abspath("%s_config.toml" % id)
+    logging.debug('running %s with config %s' % (id, config_path))
+    thread = threading.Thread(target=bootstrap_client, args=(id, config_path,))
     thread.start()
-    raft_threads[k] = thread
+    raft_threads[id] = thread
 
-try:
-    for (k, thread) in raft_threads.items():
-        thread.join()
-except KeyboardInterrupt:
-    pass
+def kick_off(id):
+    utils.kick_off("127.0.0.1:%s" % clusters[id], raft_threads[id])
 
 class TestRaftSetupAndTeardown(unittest.TestCase):
+    def setUp(self):
+        for (k, v) in clusters.items():
+            spawn_client_thread(k)
+        time.sleep(1)
 
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
-
+    def tearDown(self):
+        for (k, v) in clusters.items():
+            kick_off(k)
+        time.sleep(1)
+        
+    def test_restart(self):
+        kick_off("test3")
+        spawn_client_thread("test3")
+        time.sleep(3)
 
 if __name__ == '__main__':
+    generate_config()
+
     unittest.main()
     

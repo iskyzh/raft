@@ -4,11 +4,10 @@ import grpc
 import raft_pb2
 import raft_pb2_grpc
 
-def main():
-  channel = grpc.insecure_channel('localhost:23337')
+def kick_off(addr, thread):
+  channel = grpc.insecure_channel(addr)
   stub = raft_pb2_grpc.ControlStub(channel)
   response = stub.Shutdown(raft_pb2.Void())
-  print(response)
-
-if __name__ == "__main__":
-    main()
+  if thread.is_alive():
+    thread.join() # wait until the thread end
+  channel.close()
