@@ -9,11 +9,12 @@ import signal
 import time
 import threading
 import utils
+import tempfile
 
 verbose = False
 if os.environ.get("VERBOSE"):
     verbose = True
-    
+
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 if not 'RAFT_EXECUTABLE' in os.environ:
     logging.error('raft service executable not found')
@@ -33,18 +34,24 @@ clusters = {"test1": "23333",
 
 config = { "server": {}, "clusters": [] }
 
+_config_dir = tempfile.TemporaryDirectory()
+config_dir = _config_dir.name
+
 for (k, v) in clusters.items():
     config["clusters"].append({"name": k, "addr": "127.0.0.1:%s" % v})
 
 def get_addr(id):
     return "127.0.0.1:%s" % clusters[id]
 
+def config_file(id):
+    return "%s/%s_config.toml" % (config_dir, id)
+    
 def generate_config():
     for (k, v) in clusters.items():
         config["server"]["name"] = k
         config["server"]["addr"] = "127.0.0.1:%s" % v
         dump_config = toml.dumps(config)
-        f = open("%s_config.toml" % k, "w")
+        f = open(config_file(k), "w")
         f.write(dump_config)
         f.close()
         logging.debug('config for %s generated' % k)
@@ -62,7 +69,7 @@ def bootstrap_client(instance_name, config_path):
     logging.debug("%s detached" % instance_name)
 
 def spawn_client_thread(id):
-    config_path = os.path.abspath("%s_config.toml" % id)
+    config_path = config_file(id)
     logging.debug('running %s with config %s' % (id, config_path))
     thread = threading.Thread(target=bootstrap_client, args=(id, config_path,))
     thread.start()
