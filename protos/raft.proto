@@ -40,10 +40,15 @@ service Raft {
     rpc OnAppendEntries (AppendEntriesReply) returns (Void) {}
 }
 
-message AppendLogRequest {}
+message AppendLogRequest {
+    string log = 1;
+}
 message AppendLogReply {}
 message RequestLogRequest {}
-message RequestLogReply {}
+message RequestLogReply {
+    string role = 1;
+    repeated string logs = 2;
+}
 
 service Control {
     rpc AppendLog (AppendLogRequest) returns (AppendLogReply) {}

@@ -948,11 +948,24 @@ class AppendLogRequest :
 
   // accessors -------------------------------------------------------
 
+  // string log = 1;
+  void clear_log();
+  static const int kLogFieldNumber = 1;
+  const std::string& log() const;
+  void set_log(const std::string& value);
+  void set_log(std::string&& value);
+  void set_log(const char* value);
+  void set_log(const char* value, size_t size);
+  std::string* mutable_log();
+  std::string* release_log();
+  void set_allocated_log(std::string* log);
+
   // @@protoc_insertion_point(class_scope:AppendLogRequest)
  private:
   class HasBitSetters;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr log_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_raft_2eproto;
 };
@@ -1305,11 +1318,43 @@ class RequestLogReply :
 
   // accessors -------------------------------------------------------
 
+  // repeated string logs = 2;
+  int logs_size() const;
+  void clear_logs();
+  static const int kLogsFieldNumber = 2;
+  const std::string& logs(int index) const;
+  std::string* mutable_logs(int index);
+  void set_logs(int index, const std::string& value);
+  void set_logs(int index, std::string&& value);
+  void set_logs(int index, const char* value);
+  void set_logs(int index, const char* value, size_t size);
+  std::string* add_logs();
+  void add_logs(const std::string& value);
+  void add_logs(std::string&& value);
+  void add_logs(const char* value);
+  void add_logs(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& logs() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_logs();
+
+  // string role = 1;
+  void clear_role();
+  static const int kRoleFieldNumber = 1;
+  const std::string& role() const;
+  void set_role(const std::string& value);
+  void set_role(std::string&& value);
+  void set_role(const char* value);
+  void set_role(const char* value, size_t size);
+  std::string* mutable_role();
+  std::string* release_role();
+  void set_allocated_role(std::string* role);
+
   // @@protoc_insertion_point(class_scope:RequestLogReply)
  private:
   class HasBitSetters;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> logs_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr role_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_raft_2eproto;
 };
@@ -1767,6 +1812,57 @@ inline void AppendEntriesReply::set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uin
 
 // AppendLogRequest
 
+// string log = 1;
+inline void AppendLogRequest::clear_log() {
+  log_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& AppendLogRequest::log() const {
+  // @@protoc_insertion_point(field_get:AppendLogRequest.log)
+  return log_.GetNoArena();
+}
+inline void AppendLogRequest::set_log(const std::string& value) {
+  
+  log_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:AppendLogRequest.log)
+}
+inline void AppendLogRequest::set_log(std::string&& value) {
+  
+  log_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:AppendLogRequest.log)
+}
+inline void AppendLogRequest::set_log(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  log_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:AppendLogRequest.log)
+}
+inline void AppendLogRequest::set_log(const char* value, size_t size) {
+  
+  log_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:AppendLogRequest.log)
+}
+inline std::string* AppendLogRequest::mutable_log() {
+  
+  // @@protoc_insertion_point(field_mutable:AppendLogRequest.log)
+  return log_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* AppendLogRequest::release_log() {
+  // @@protoc_insertion_point(field_release:AppendLogRequest.log)
+  
+  return log_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void AppendLogRequest::set_allocated_log(std::string* log) {
+  if (log != nullptr) {
+    
+  } else {
+    
+  }
+  log_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), log);
+  // @@protoc_insertion_point(field_set_allocated:AppendLogRequest.log)
+}
+
 // -------------------------------------------------------------------
 
 // AppendLogReply
@@ -1778,6 +1874,122 @@ inline void AppendEntriesReply::set_lastagreedindex(::PROTOBUF_NAMESPACE_ID::uin
 // -------------------------------------------------------------------
 
 // RequestLogReply
+
+// string role = 1;
+inline void RequestLogReply::clear_role() {
+  role_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& RequestLogReply::role() const {
+  // @@protoc_insertion_point(field_get:RequestLogReply.role)
+  return role_.GetNoArena();
+}
+inline void RequestLogReply::set_role(const std::string& value) {
+  
+  role_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:RequestLogReply.role)
+}
+inline void RequestLogReply::set_role(std::string&& value) {
+  
+  role_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:RequestLogReply.role)
+}
+inline void RequestLogReply::set_role(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  role_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:RequestLogReply.role)
+}
+inline void RequestLogReply::set_role(const char* value, size_t size) {
+  
+  role_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:RequestLogReply.role)
+}
+inline std::string* RequestLogReply::mutable_role() {
+  
+  // @@protoc_insertion_point(field_mutable:RequestLogReply.role)
+  return role_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* RequestLogReply::release_role() {
+  // @@protoc_insertion_point(field_release:RequestLogReply.role)
+  
+  return role_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void RequestLogReply::set_allocated_role(std::string* role) {
+  if (role != nullptr) {
+    
+  } else {
+    
+  }
+  role_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), role);
+  // @@protoc_insertion_point(field_set_allocated:RequestLogReply.role)
+}
+
+// repeated string logs = 2;
+inline int RequestLogReply::logs_size() const {
+  return logs_.size();
+}
+inline void RequestLogReply::clear_logs() {
+  logs_.Clear();
+}
+inline const std::string& RequestLogReply::logs(int index) const {
+  // @@protoc_insertion_point(field_get:RequestLogReply.logs)
+  return logs_.Get(index);
+}
+inline std::string* RequestLogReply::mutable_logs(int index) {
+  // @@protoc_insertion_point(field_mutable:RequestLogReply.logs)
+  return logs_.Mutable(index);
+}
+inline void RequestLogReply::set_logs(int index, const std::string& value) {
+  // @@protoc_insertion_point(field_set:RequestLogReply.logs)
+  logs_.Mutable(index)->assign(value);
+}
+inline void RequestLogReply::set_logs(int index, std::string&& value) {
+  // @@protoc_insertion_point(field_set:RequestLogReply.logs)
+  logs_.Mutable(index)->assign(std::move(value));
+}
+inline void RequestLogReply::set_logs(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  logs_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:RequestLogReply.logs)
+}
+inline void RequestLogReply::set_logs(int index, const char* value, size_t size) {
+  logs_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:RequestLogReply.logs)
+}
+inline std::string* RequestLogReply::add_logs() {
+  // @@protoc_insertion_point(field_add_mutable:RequestLogReply.logs)
+  return logs_.Add();
+}
+inline void RequestLogReply::add_logs(const std::string& value) {
+  logs_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:RequestLogReply.logs)
+}
+inline void RequestLogReply::add_logs(std::string&& value) {
+  logs_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:RequestLogReply.logs)
+}
+inline void RequestLogReply::add_logs(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  logs_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:RequestLogReply.logs)
+}
+inline void RequestLogReply::add_logs(const char* value, size_t size) {
+  logs_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:RequestLogReply.logs)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+RequestLogReply::logs() const {
+  // @@protoc_insertion_point(field_list:RequestLogReply.logs)
+  return logs_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+RequestLogReply::mutable_logs() {
+  // @@protoc_insertion_point(field_mutable_list:RequestLogReply.logs)
+  return &logs_;
+}
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop

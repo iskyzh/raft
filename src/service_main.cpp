@@ -13,28 +13,38 @@ class RaftControl final : public Control::Service {
 public:
     struct ControlEvent : public Event {
         std::string cmd;
+        enum TYPE {
+            SHUTDOWN, APPEND
+        } type;
 
-        ControlEvent(const std::string cmd) : cmd(cmd) {}
+        ControlEvent(TYPE type, const std::string &cmd) : cmd(cmd), type(type) {}
     };
 
     Status AppendLog(grpc::ServerContext *context, const AppendLogRequest *request,
                      AppendLogReply *response) override {
+        client->q.push(new ControlEvent(ControlEvent::APPEND, request->logd()));
         return Status::OK;
     }
 
     Status RequestLog(grpc::ServerContext *context, const RequestLogRequest *request,
                       RequestLogReply *response) override {
+        for (auto &&log : inst->logs.logs) {
+            response->add_logs(log.second);
+        }
+        response->set_role(inst->get_role_string());
         return Status::OK;
     }
 
     Status Shutdown(grpc::ServerContext *context, const Void *request, Void *response) override {
-        client->q.push(new ControlEvent("shutdown"));
+        client->q.push(new ControlEvent(ControlEvent::SHUTDOWN, ""));
         return Status::OK;
     }
 
     shared_ptr<RaftRPCClient> client;
+    shared_ptr<Instance> inst;
 
-    RaftControl(shared_ptr<RaftRPCClient> client) : client(client) {}
+    RaftControl(shared_ptr<RaftRPCClient> client, shared_ptr<Instance> inst)
+            : client(client), inst(inst) {}
 
 
 };
@@ -61,22 +71,23 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
             BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
                                     << inst->logs.logs.size();
 
-            if (inst->role == LEADER) {
-                static unsigned message_id = 0;
-                string msg = generate_message(message_id++);
-                inst->append_entry(msg);
-                BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append entry";
-            }
         }
         Event *event;
         while (client->q.pop(event)) {
             if (auto rpc = dynamic_cast<RaftRPCClient::RPCMessage *>(event)) {
                 inst->on_rpc(rpc->from, rpc->message);
             } else if (auto control = dynamic_cast<RaftControl::ControlEvent *>(event)) {
-                shutdown = true;
-                server->Shutdown();
-                delete event;
-                break;
+                if (control->type == RaftControl::ControlEvent::SHUTDOWN) {
+                    shutdown = true;
+                    server->Shutdown();
+                    delete event;
+                    break;
+                } else if (control->type == RaftControl::ControlEvent::APPEND) {
+                    if (inst->role == LEADER) {
+                        inst->append_entry(control->cmd);
+                        BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append entry";
+                    }
+                }
             }
             delete event;
         }
@@ -128,7 +139,7 @@ int main(int argc, char **argv) {
 
     auto client = make_shared<RaftRPCClient>(*server_name, *server_addr, route);
     auto instance = make_shared<Instance>(*server_name, client);
-    auto control = new RaftControl(client);
+    auto control = new RaftControl(client, instance);
     auto server = client->make_server(control);
     instance->set_clusters(clusters);
 
