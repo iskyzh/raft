@@ -41,9 +41,13 @@ using grpc::CompletionQueue;
 using google::protobuf::Message;
 using boost::lockfree::queue;
 
+struct Event {
+    virtual ~Event() {}
+};
+
 class RaftRPCClient final : public Raft::Service, public RPCClient {
 public:
-    struct RPCMessage {
+    struct RPCMessage : public Event {
         const string from;
         shared_ptr<Message> message;
 
@@ -57,7 +61,7 @@ public:
         ~RPCMessage() {}
     };
 
-    queue<RPCMessage *> q;
+    queue<Event *> q;
 
     Status RequestVote(ServerContext *context, const RequestVoteRequest *request, Void *response) override {
         q.push(RPCMessage::build(context->peer(), make_shared<RequestVoteRequest>(*request)));
@@ -91,13 +95,13 @@ public:
 
     RaftRPCClient() : RaftRPCClient("test", "127.0.0.1:23333", map<string, string>()) {}
 
-    void run_server() {
+    shared_ptr<Server> make_server(Control::Service *control_service) {
         ServerBuilder builder;
         builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
         builder.RegisterService(this);
-        unique_ptr<Server> server(builder.BuildAndStart());
-        BOOST_LOG_TRIVIAL(info) << id << " server listening on " << server_addr;
-        server->Wait();
+        if (control_service != nullptr) builder.RegisterService(control_service);
+        shared_ptr<Server> server(builder.BuildAndStart());
+        return server;
     }
 
     void dispatch_send(const string to, shared_ptr<Message> message) {

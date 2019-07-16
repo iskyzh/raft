@@ -65,7 +65,7 @@ int main() {
         auto instance = make_shared<Instance>(client_name, client);
         instance->set_clusters(clusters);
         instances[client_name] = instance;
-        thread server_thread([client]() { client->run_server(); });
+        thread server_thread([client]() { client->make_server(nullptr)->Wait(); });
         threads.push_back(std::move(server_thread));
     }
     for (auto &&instance : instances) {

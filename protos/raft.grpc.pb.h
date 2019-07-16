@@ -726,10 +726,10 @@ class Raft final {
   typedef WithStreamedUnaryMethod_RequestVote<WithStreamedUnaryMethod_OnRequestVote<WithStreamedUnaryMethod_AppendEntries<WithStreamedUnaryMethod_OnAppendEntries<Service > > > > StreamedService;
 };
 
-class Client final {
+class Control final {
  public:
   static constexpr char const* service_full_name() {
-    return "Client";
+    return "Control";
   }
   class StubInterface {
    public:
@@ -748,6 +748,13 @@ class Client final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>> PrepareAsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>>(PrepareAsyncRequestLogRaw(context, request, cq));
     }
+    virtual ::grpc::Status Shutdown(::grpc::ClientContext* context, const ::Void& request, ::Void* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::Void>> AsyncShutdown(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::Void>>(AsyncShutdownRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::Void>> PrepareAsyncShutdown(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::Void>>(PrepareAsyncShutdownRaw(context, request, cq));
+    }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
@@ -759,6 +766,10 @@ class Client final {
       virtual void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) = 0;
       virtual void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       virtual void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void Shutdown(::grpc::ClientContext* context, const ::Void* request, ::Void* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Shutdown(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Shutdown(::grpc::ClientContext* context, const ::Void* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void Shutdown(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
     };
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
@@ -766,6 +777,8 @@ class Client final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::AppendLogReply>* PrepareAsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>* AsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::RequestLogReply>* PrepareAsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::Void>* AsyncShutdownRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::Void>* PrepareAsyncShutdownRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -784,6 +797,13 @@ class Client final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>> PrepareAsyncRequestLog(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::RequestLogReply>>(PrepareAsyncRequestLogRaw(context, request, cq));
     }
+    ::grpc::Status Shutdown(::grpc::ClientContext* context, const ::Void& request, ::Void* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::Void>> AsyncShutdown(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::Void>>(AsyncShutdownRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::Void>> PrepareAsyncShutdown(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::Void>>(PrepareAsyncShutdownRaw(context, request, cq));
+    }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
@@ -795,6 +815,10 @@ class Client final {
       void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, std::function<void(::grpc::Status)>) override;
       void RequestLog(::grpc::ClientContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       void RequestLog(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::RequestLogReply* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void Shutdown(::grpc::ClientContext* context, const ::Void* request, ::Void* response, std::function<void(::grpc::Status)>) override;
+      void Shutdown(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, std::function<void(::grpc::Status)>) override;
+      void Shutdown(::grpc::ClientContext* context, const ::Void* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void Shutdown(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit experimental_async(Stub* stub): stub_(stub) { }
@@ -810,8 +834,11 @@ class Client final {
     ::grpc::ClientAsyncResponseReader< ::AppendLogReply>* PrepareAsyncAppendLogRaw(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::RequestLogReply>* AsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::RequestLogReply>* PrepareAsyncRequestLogRaw(::grpc::ClientContext* context, const ::RequestLogRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::Void>* AsyncShutdownRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::Void>* PrepareAsyncShutdownRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_AppendLog_;
     const ::grpc::internal::RpcMethod rpcmethod_RequestLog_;
+    const ::grpc::internal::RpcMethod rpcmethod_Shutdown_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -821,6 +848,7 @@ class Client final {
     virtual ~Service();
     virtual ::grpc::Status AppendLog(::grpc::ServerContext* context, const ::AppendLogRequest* request, ::AppendLogReply* response);
     virtual ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response);
+    virtual ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_AppendLog : public BaseClass {
@@ -862,7 +890,27 @@ class Client final {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_AppendLog<WithAsyncMethod_RequestLog<Service > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithAsyncMethod_Shutdown() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestShutdown(::grpc::ServerContext* context, ::Void* request, ::grpc::ServerAsyncResponseWriter< ::Void>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_AppendLog<WithAsyncMethod_RequestLog<WithAsyncMethod_Shutdown<Service > > > AsyncService;
   template <class BaseClass>
   class ExperimentalWithCallbackMethod_AppendLog : public BaseClass {
    private:
@@ -925,7 +973,38 @@ class Client final {
     }
     virtual void RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
-  typedef ExperimentalWithCallbackMethod_AppendLog<ExperimentalWithCallbackMethod_RequestLog<Service > > ExperimentalCallbackService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_Shutdown() {
+      ::grpc::Service::experimental().MarkMethodCallback(2,
+        new ::grpc::internal::CallbackUnaryHandler< ::Void, ::Void>(
+          [this](::grpc::ServerContext* context,
+                 const ::Void* request,
+                 ::Void* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->Shutdown(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_Shutdown(
+        ::grpc::experimental::MessageAllocator< ::Void, ::Void>* allocator) {
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::Void, ::Void>*>(
+          ::grpc::Service::experimental().GetHandler(2))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  typedef ExperimentalWithCallbackMethod_AppendLog<ExperimentalWithCallbackMethod_RequestLog<ExperimentalWithCallbackMethod_Shutdown<Service > > > ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_AppendLog : public BaseClass {
    private:
@@ -956,6 +1035,23 @@ class Client final {
     }
     // disable synchronous version of this method
     ::grpc::Status RequestLog(::grpc::ServerContext* context, const ::RequestLogRequest* request, ::RequestLogReply* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_Shutdown() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -998,6 +1094,26 @@ class Client final {
     }
     void RequestRequestLog(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_Shutdown() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestShutdown(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1051,6 +1167,31 @@ class Client final {
     virtual void RequestLog(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
   template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Shutdown() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(2,
+        new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->Shutdown(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void Shutdown(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_AppendLog : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
@@ -1090,9 +1231,29 @@ class Client final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedRequestLog(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::RequestLogRequest,::RequestLogReply>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<Service > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Shutdown : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithStreamedUnaryMethod_Shutdown() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler< ::Void, ::Void>(std::bind(&WithStreamedUnaryMethod_Shutdown<BaseClass>::StreamedShutdown, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_Shutdown() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedShutdown(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::Void,::Void>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<WithStreamedUnaryMethod_Shutdown<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_AppendLog<WithStreamedUnaryMethod_RequestLog<WithStreamedUnaryMethod_Shutdown<Service > > > StreamedService;
 };
 
 

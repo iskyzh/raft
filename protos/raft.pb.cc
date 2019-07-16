@@ -287,10 +287,11 @@ const char descriptor_table_protodef_raft_2eproto[] =
   "questVote\022\021.RequestVoteReply\032\005.Void\"\000\022/\n"
   "\rAppendEntries\022\025.AppendEntriesRequest\032\005."
   "Void\"\000\022/\n\017OnAppendEntries\022\023.AppendEntrie"
-  "sReply\032\005.Void\"\0002q\n\006Client\0221\n\tAppendLog\022\021"
-  ".AppendLogRequest\032\017.AppendLogReply\"\000\0224\n\n"
-  "RequestLog\022\022.RequestLogRequest\032\020.Request"
-  "LogReply\"\000b\006proto3"
+  "sReply\032\005.Void\"\0002\216\001\n\007Control\0221\n\tAppendLog"
+  "\022\021.AppendLogRequest\032\017.AppendLogReply\"\000\0224"
+  "\n\nRequestLog\022\022.RequestLogRequest\032\020.Reque"
+  "stLogReply\"\000\022\032\n\010Shutdown\022\005.Void\032\005.Void\"\000"
+  "b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_raft_2eproto_deps[1] = {
 };
@@ -308,7 +309,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_raf
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_raft_2eproto_once;
 static bool descriptor_table_raft_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_raft_2eproto = {
-  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 818,
+  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 848,
   &descriptor_table_raft_2eproto_once, descriptor_table_raft_2eproto_sccs, descriptor_table_raft_2eproto_deps, 9, 0,
   schemas, file_default_instances, TableStruct_raft_2eproto::offsets,
   file_level_metadata_raft_2eproto, 9, file_level_enum_descriptors_raft_2eproto, file_level_service_descriptors_raft_2eproto,

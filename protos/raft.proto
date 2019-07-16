@@ -45,7 +45,8 @@ message AppendLogReply {}
 message RequestLogRequest {}
 message RequestLogReply {}
 
-service Client {
+service Control {
     rpc AppendLog (AppendLogRequest) returns (AppendLogReply) {}
     rpc RequestLog (RequestLogRequest) returns (RequestLogReply) {}
+    rpc Shutdown (Void) returns (Void) {}
 }
