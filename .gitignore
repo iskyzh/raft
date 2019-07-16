@@ -16,3 +16,5 @@ Bin/
 .idea/
 data/
 dumps/
+
+__pycache__/

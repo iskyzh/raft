@@ -6,7 +6,7 @@ cache:
   directories:
     - /home/travis/vcpkg/
 install:
-  - pip3 install toml
+  - pip3 install -r tests/requirements.txt
 before_script:
   - export CC=gcc-9
   - export CXX=g++-9
