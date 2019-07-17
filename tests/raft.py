@@ -137,6 +137,12 @@ def wait_alive(id):
 
 def wait_dead(id):
     utils.wait_dead(get_addr(id))
-        
+
+def offline(id):
+    utils.offline(get_addr(id))
+
+def online(id):
+    utils.online(get_addr(id))
+
 generate_config()
 

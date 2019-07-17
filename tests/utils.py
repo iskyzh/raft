@@ -13,6 +13,20 @@ def kick_off_rpc(addr):
     channel.close()
     return response
 
+def offline(addr):
+    channel = grpc.insecure_channel(addr)
+    stub = raft_pb2_grpc.ControlStub(channel)
+    response = stub.Offline(raft_pb2.Void())
+    channel.close()
+    return response
+
+def online(addr):
+    channel = grpc.insecure_channel(addr)
+    stub = raft_pb2_grpc.ControlStub(channel)
+    response = stub.Online(raft_pb2.Void())
+    channel.close()
+    return response
+    
 def alive(addr):
     channel = grpc.insecure_channel(addr)
     stub = raft_pb2_grpc.ControlStub(channel)

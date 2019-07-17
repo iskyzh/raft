@@ -18,7 +18,7 @@ before_script:
   - popd
   - cd protos && ./generate.sh && cd ..
 script:
-  - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
+  - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
   - export RAFT_EXECUTABLE=$(pwd)/RaftMain

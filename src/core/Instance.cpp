@@ -20,7 +20,8 @@ using std::dynamic_pointer_cast;
 
 Instance::Instance(const string &id, shared_ptr<RPCClient> rpc) :
         role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
-        current_term(0), commit_index(0), last_applied(0) {
+        current_term(0), commit_index(0), last_applied(0),
+        __debug_offline(false) {
     std::srand(std::time(nullptr));
 }
 
@@ -96,6 +97,7 @@ unsigned Instance::cluster_size() {
 }
 
 void Instance::on_rpc(const string &, shared_ptr<Message> message) {
+    if (__debug_offline) return;
     auto message_term = get_term(message);
     if (message_term > current_term) {
         current_term = message_term;

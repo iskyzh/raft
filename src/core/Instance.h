@@ -49,6 +49,8 @@ public:
     map <Cluster, unsigned int> match_index;
     unsigned int commit_index;
     unsigned int last_applied;
+    
+    bool __debug_offline;
 
     Instance(const string &id, shared_ptr<RPCClient> rpc);
 

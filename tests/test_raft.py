@@ -28,3 +28,16 @@ def test_new_leader_after_kick_off(clusters):
     assert candidate_cnt == 0
     assert follower_cnt == 3
     assert leader_cnt == 1
+
+def test_no_leader_after_kick_off(clusters):
+    leaders = find_leaders(clusters)
+    followers = find_followers(clusters)
+    kick_off(leaders[0])
+    kick_off(followers[0])
+    kick_off(followers[1])
+    time.sleep(3)
+    logs = request_all_logs(clusters)
+
+    leader_cnt = count_role(logs, "leader")
+    
+    assert leader_cnt == 0

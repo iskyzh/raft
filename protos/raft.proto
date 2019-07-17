@@ -67,4 +67,8 @@ service Control {
     }
     rpc Alive (Void) returns (Void) {
     }
+    rpc Offline (Void) returns (Void) {
+    }
+    rpc Online (Void) returns (Void) {
+    }
 }

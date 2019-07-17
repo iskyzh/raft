@@ -14,7 +14,7 @@ public:
     struct ControlEvent : public Event {
         std::string cmd;
         enum TYPE {
-            SHUTDOWN, APPEND
+            SHUTDOWN, APPEND, ONLINE, OFFLINE
         } type;
 
         ControlEvent(TYPE type, const std::string &cmd) : cmd(cmd), type(type) {}
@@ -41,6 +41,18 @@ public:
 
     Status Shutdown(grpc::ServerContext *context, const Void *request, Void *response) override {
         client->q.push(new ControlEvent(ControlEvent::SHUTDOWN, ""));
+        return Status::OK;
+    }
+
+    Status Offline(grpc::ServerContext *context, const Void *request, Void *response) override {
+        client->__debug_supress_rpc_send = true;
+        client->q.push(new ControlEvent(ControlEvent::OFFLINE, ""));
+        return Status::OK;
+    }
+
+    Status Online(grpc::ServerContext *context, const Void *request, Void *response) override {
+        client->__debug_supress_rpc_send = false;
+        client->q.push(new ControlEvent(ControlEvent::ONLINE, ""));
         return Status::OK;
     }
 
@@ -92,6 +104,12 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
                         inst->append_entry(control->cmd);
                         BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append entry";
                     }
+                } else if (control->type == RaftControl::ControlEvent::ONLINE) {
+                    inst->__debug_offline = false;
+                    BOOST_LOG_TRIVIAL(info) << inst->id << " node online";
+                } else if (control->type == RaftControl::ControlEvent::OFFLINE) {
+                    BOOST_LOG_TRIVIAL(info) << inst->id << " node offline";
+                    inst->__debug_offline = true;
                 }
             }
             delete event;

@@ -1,5 +1,8 @@
 {
     "terminal.integrated.env.osx": {
-        "RAFT_EXECUTABLE": "../cmake-build-debug/RaftMain"
+        "RAFT_EXECUTABLE": "${workspaceFolder}/cmake-build-debug/RaftMain"
+    },
+    "terminal.integrated.env.linux": {
+        "RAFT_EXECUTABLE": "${workspaceFolder}/cmake-build/RaftMain"
     }
 }

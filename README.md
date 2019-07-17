@@ -31,12 +31,13 @@ parts as it is more convenient to test.
 
 `rpc/` contains one RPC implementation with gRPC.
 
-In `src/`, `mock_main.cpp` can be used to mock RPC network with events,
+In `src/`, `mock_main.cpp` can be used to mock a Raft cluster with RPC 'events',
 which means that there're no RPC requests and all RPC are simulated with
-events and callbacks.  You may adjust `drop_rate` and `delay` to mock an 
+events and callbacks. You may adjust `drop_rate` and `delay` to mock an 
 unstable network. You may add events to simulate events in network. 
 Currently the mock main will kick off leader and restore it to test log consistency.
 
-`grpc_main.cpp` uses gRPC for communication between clients.
+`grpc_main.cpp` uses gRPC for communication between clients. It also helps set
+up a Raft cluster.
 
-`service_main.cpp` is a real Raft client.
+`service_main.cpp` is a real Raft client with server control for system testing.

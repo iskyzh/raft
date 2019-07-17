@@ -62,6 +62,7 @@ public:
     };
 
     queue<Event *> q;
+    std::atomic<bool> __debug_supress_rpc_send;
 
     Status RequestVote(ServerContext *context, const RequestVoteRequest *request, Void *response) override {
         q.push(RPCMessage::build(context->peer(), make_shared<RequestVoteRequest>(*request)));
@@ -83,8 +84,8 @@ public:
         return Status::OK;
     }
 
-    RaftRPCClient(const string& id, const string &server_addr, const map<string, string> &clusters)
-            : id(id), server_addr(server_addr), q(65536), clusters(clusters) {
+    RaftRPCClient(const string &id, const string &server_addr, const map<string, string> &clusters)
+            : id(id), server_addr(server_addr), q(65536), clusters(clusters), __debug_supress_rpc_send(false) {
         for (auto &&kv : clusters) {
             auto channel = grpc::CreateChannel(
                     kv.second,
@@ -127,6 +128,7 @@ public:
     }
 
     void send(const string &to, shared_ptr<Message> message) override {
+        if (__debug_supress_rpc_send) return;
         thread send_thread(&RaftRPCClient::dispatch_send, this, to, message);
         send_thread.detach();
     }
