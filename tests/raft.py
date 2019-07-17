@@ -82,11 +82,20 @@ def request_log(id):
 def append_log(id, log):
     return utils.append_log(get_addr(id), log)
 
-def find_leader(clusters):
+def find_leaders(clusters):
+    leaders = []
     for (k, v) in clusters.items():
         log = request_log(k)
         if log.role == "leader":
-            return k
-    return None
+            leaders.append(k)
+    return leaders
+
+def find_followers(clusters):
+    followers = []
+    for (k, v) in clusters.items():
+        log = request_log(k)
+        if log.role == "follower":
+            followers.append(k)
+    return followers
 
 generate_config()

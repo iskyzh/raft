@@ -18,7 +18,8 @@ script:
   - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
-  - cd ../tests/ && RAFT_EXECUTABLE=RaftMain pytest
+  - export RAFT_EXECUTABLE=$(pwd)/RaftMain
+  - cd ../tests/ && pytest
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE
