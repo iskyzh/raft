@@ -8,6 +8,7 @@ import time
 import threading
 import utils
 import tempfile
+import grpc
 
 verbose = False
 if os.environ.get("VERBOSE"):
@@ -75,6 +76,7 @@ def spawn_client_thread(id):
 
 def kick_off(id):
     utils.kick_off(get_addr(id), raft_threads[id])
+    raft_threads[id] = None
 
 def request_log(id):
     return utils.request_log(get_addr(id))
@@ -82,20 +84,35 @@ def request_log(id):
 def append_log(id, log):
     return utils.append_log(get_addr(id), log)
 
-def find_leaders(clusters):
-    leaders = []
+def find_role(clusters, role):
+    result = []
     for (k, v) in clusters.items():
-        log = request_log(k)
-        if log.role == "leader":
-            leaders.append(k)
-    return leaders
+        try:
+            log = request_log(k)
+            if log.role == role:
+                result.append(k)
+        except grpc.RpcError:
+            logging.warning("request to %s failed", k)
+
+    return result
+
+def find_leaders(clusters):
+    return find_role(clusters, "leader")
 
 def find_followers(clusters):
-    followers = []
-    for (k, v) in clusters.items():
-        log = request_log(k)
-        if log.role == "follower":
-            followers.append(k)
-    return followers
+    return find_role(clusters, "follower")
 
+def find_candidates(clusters):
+    return find_role(clusters, "candidate")
+
+def request_all_logs(clusters):
+    logs = {}
+    for (k, v) in clusters.items():
+        try:
+            logs[k] = request_log(k)
+        except grpc.RpcError:
+            logging.warning("request to %s failed", k)
+
+    return logs
+    
 generate_config()

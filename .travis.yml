@@ -19,7 +19,7 @@ script:
   - cd build && cmake --build .
   - ./RaftTest
   - export RAFT_EXECUTABLE=$(pwd)/RaftMain
-  - cd ../tests/ && pytest
+  - cd ../tests/ && pytest -v
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE

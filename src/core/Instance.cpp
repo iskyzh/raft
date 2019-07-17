@@ -102,7 +102,7 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
         as_follower();
     }
     if (role == FOLLOWER) {
-        follower_timeout = get_tick();
+        follower_begin = get_tick();
         if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
             bool grant_vote = true;
             if (req_vote->term() < this->current_term) grant_vote = false;

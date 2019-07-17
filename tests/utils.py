@@ -6,6 +6,8 @@ import raft_pb2_grpc
 
 
 def kick_off(addr, thread):
+    if thread is None:
+        return None
     channel = grpc.insecure_channel(addr)
     stub = raft_pb2_grpc.ControlStub(channel)
     response = stub.Shutdown(raft_pb2.Void())
