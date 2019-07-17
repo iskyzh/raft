@@ -24,8 +24,10 @@ Personally I would like to break down Raft protocol to many small parts as it is
 
 `core/` contains core Raft algorithm.
 `rpc/` contains one RPC implementation with gRPC.
-In `src/`, `mock_main.cpp` can be used to mock RPC network with events. You may adjust `drop_rate` and `delay` to mock an
-unstable network.
+
+In `src/`, `mock_main.cpp` can be used to mock RPC network with events. 
+You may adjust `drop_rate` and `delay` to mock an unstable network.
+You may add 
 
 `grpc_main.cpp` uses gRPC for communication between clients.
 

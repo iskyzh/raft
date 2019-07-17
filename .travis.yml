@@ -7,14 +7,16 @@ cache:
     - /home/travis/vcpkg/
 install:
   - pip3 install -r tests/requirements.txt
-before_script:
   - export CC=gcc-9
   - export CXX=g++-9
   - pushd . && cd ~
   - if [ ! -f "vcpkg/bootstrap-vcpkg.sh" ] ; then git clone https://github.com/Microsoft/vcpkg.git && cd vcpkg && ./bootstrap-vcpkg.sh && cd ..; fi
   - cd vcpkg && ./vcpkg install gtest grpc protobuf cpptoml && rm -rf buildtrees
-script:
+  - export VCPKGROOT=$(pwd)
+before_script:
   - popd
+  - cd protos && ./generate.sh && cd ..
+script:
   - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
