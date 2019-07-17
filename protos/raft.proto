@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-message Void {}
+message Void {
+}
 
 message RequestVoteRequest {
     uint32 term = 1;
@@ -34,24 +35,35 @@ message AppendEntriesReply {
 // One-way RPC
 
 service Raft {
-    rpc RequestVote (RequestVoteRequest) returns (Void) {}
-    rpc OnRequestVote (RequestVoteReply) returns (Void) {}
-    rpc AppendEntries (AppendEntriesRequest) returns (Void) {}
-    rpc OnAppendEntries (AppendEntriesReply) returns (Void) {}
+    rpc RequestVote (RequestVoteRequest) returns (Void) {
+    }
+    rpc OnRequestVote (RequestVoteReply) returns (Void) {
+    }
+    rpc AppendEntries (AppendEntriesRequest) returns (Void) {
+    }
+    rpc OnAppendEntries (AppendEntriesReply) returns (Void) {
+    }
 }
 
 message AppendLogRequest {
     string log = 1;
 }
-message AppendLogReply {}
-message RequestLogRequest {}
+message AppendLogReply {
+}
+message RequestLogRequest {
+}
 message RequestLogReply {
     string role = 1;
     repeated string logs = 2;
 }
 
 service Control {
-    rpc AppendLog (AppendLogRequest) returns (AppendLogReply) {}
-    rpc RequestLog (RequestLogRequest) returns (RequestLogReply) {}
-    rpc Shutdown (Void) returns (Void) {}
+    rpc AppendLog (AppendLogRequest) returns (AppendLogReply) {
+    }
+    rpc RequestLog (RequestLogRequest) returns (RequestLogReply) {
+    }
+    rpc Shutdown (Void) returns (Void) {
+    }
+    rpc Alive (Void) returns (Void) {
+    }
 }

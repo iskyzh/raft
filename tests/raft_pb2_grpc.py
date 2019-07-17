@@ -124,6 +124,11 @@ class ControlStub(object):
         request_serializer=raft__pb2.Void.SerializeToString,
         response_deserializer=raft__pb2.Void.FromString,
         )
+    self.Alive = channel.unary_unary(
+        '/Control/Alive',
+        request_serializer=raft__pb2.Void.SerializeToString,
+        response_deserializer=raft__pb2.Void.FromString,
+        )
 
 
 class ControlServicer(object):
@@ -151,6 +156,13 @@ class ControlServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def Alive(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_ControlServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -166,6 +178,11 @@ def add_ControlServicer_to_server(servicer, server):
       ),
       'Shutdown': grpc.unary_unary_rpc_method_handler(
           servicer.Shutdown,
+          request_deserializer=raft__pb2.Void.FromString,
+          response_serializer=raft__pb2.Void.SerializeToString,
+      ),
+      'Alive': grpc.unary_unary_rpc_method_handler(
+          servicer.Alive,
           request_deserializer=raft__pb2.Void.FromString,
           response_serializer=raft__pb2.Void.SerializeToString,
       ),

@@ -4,11 +4,9 @@ import pytest
 import time
 
 @pytest.fixture
-def clusters():
-    for (k, v) in raft.clusters.items():
-        spawn_client_thread(k)
-    time.sleep(3)
+def clusters(): 
+    for (id, _) in raft.clusters.items():
+        spawn_client_thread(id)
     yield raft.clusters
-    for (k, v) in raft.clusters.items():
-        kick_off(k)
-    time.sleep(1)
+    for (id, _) in raft.clusters.items():
+        kick_off(id)

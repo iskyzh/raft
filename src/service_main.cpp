@@ -26,6 +26,10 @@ public:
         return Status::OK;
     }
 
+    Status Alive(grpc::ServerContext *context, const Void *request, Void *response) override {
+        return Status::OK;
+    }
+
     Status RequestLog(grpc::ServerContext *context, const RequestLogRequest *request,
                       RequestLogReply *response) override {
         for (auto &&log : inst->logs.logs) {
@@ -79,6 +83,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
             } else if (auto control = dynamic_cast<RaftControl::ControlEvent *>(event)) {
                 if (control->type == RaftControl::ControlEvent::SHUTDOWN) {
                     shutdown = true;
+                    BOOST_LOG_TRIVIAL(info) << inst->id << " shutting down...";
                     server->Shutdown();
                     delete event;
                     break;

@@ -208,6 +208,7 @@ static const char* Control_method_names[] = {
   "/Control/AppendLog",
   "/Control/RequestLog",
   "/Control/Shutdown",
+  "/Control/Alive",
 };
 
 std::unique_ptr< Control::Stub> Control::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -220,6 +221,7 @@ Control::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
   : channel_(channel), rpcmethod_AppendLog_(Control_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_RequestLog_(Control_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_Shutdown_(Control_method_names[2], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Alive_(Control_method_names[3], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status Control::Stub::AppendLog(::grpc::ClientContext* context, const ::AppendLogRequest& request, ::AppendLogReply* response) {
@@ -306,6 +308,34 @@ void Control::Stub::experimental_async::Shutdown(::grpc::ClientContext* context,
   return ::grpc::internal::ClientAsyncResponseReaderFactory< ::Void>::Create(channel_.get(), cq, rpcmethod_Shutdown_, context, request, false);
 }
 
+::grpc::Status Control::Stub::Alive(::grpc::ClientContext* context, const ::Void& request, ::Void* response) {
+  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_Alive_, context, request, response);
+}
+
+void Control::Stub::experimental_async::Alive(::grpc::ClientContext* context, const ::Void* request, ::Void* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Alive_, context, request, response, std::move(f));
+}
+
+void Control::Stub::experimental_async::Alive(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Alive_, context, request, response, std::move(f));
+}
+
+void Control::Stub::experimental_async::Alive(::grpc::ClientContext* context, const ::Void* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_Alive_, context, request, response, reactor);
+}
+
+void Control::Stub::experimental_async::Alive(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::Void* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_Alive_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::Void>* Control::Stub::AsyncAliveRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::Void>::Create(channel_.get(), cq, rpcmethod_Alive_, context, request, true);
+}
+
+::grpc::ClientAsyncResponseReader< ::Void>* Control::Stub::PrepareAsyncAliveRaw(::grpc::ClientContext* context, const ::Void& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::Void>::Create(channel_.get(), cq, rpcmethod_Alive_, context, request, false);
+}
+
 Control::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Control_method_names[0],
@@ -322,6 +352,11 @@ Control::Service::Service() {
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Control::Service, ::Void, ::Void>(
           std::mem_fn(&Control::Service::Shutdown), this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      Control_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< Control::Service, ::Void, ::Void>(
+          std::mem_fn(&Control::Service::Alive), this)));
 }
 
 Control::Service::~Service() {
@@ -342,6 +377,13 @@ Control::Service::~Service() {
 }
 
 ::grpc::Status Control::Service::Shutdown(::grpc::ServerContext* context, const ::Void* request, ::Void* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status Control::Service::Alive(::grpc::ServerContext* context, const ::Void* request, ::Void* response) {
   (void) context;
   (void) request;
   (void) response;

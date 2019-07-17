@@ -2,3 +2,5 @@ protos/raft.grpc.pb.h linguist-vendored
 protos/raft.pb.h linguist-vendored
 protos/raft.grpc.pb.cc linguist-vendored
 protos/raft.pb.cc linguist-vendored
+tests/raft_pb2_grpc.py linguist-vendored
+tests/raft_pb2.py linguist-vendored

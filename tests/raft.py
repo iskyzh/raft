@@ -60,23 +60,40 @@ def generate_config():
     logging.info('config generation complete')
 
 def bootstrap_client(instance_name, config_path):
-    logging.debug("%s started" % instance_name)
     args = [executable, config_path]
     if verbose:
         args = [executable, config_path, "--verbose"]
-    subprocess.run(args)
+    try:
+        subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    except Exception as e:
+        logging.warning("%s errored %s" % (instance_name, e))
+        # raise e
     logging.debug("%s detached" % instance_name)
+    raft_threads[instance_name] = None
 
 def spawn_client_thread(id):
     config_path = config_file(id)
     logging.debug('running %s with config %s' % (id, config_path))
-    thread = threading.Thread(target=bootstrap_client, args=(id, config_path,))
-    thread.start()
-    raft_threads[id] = thread
+    def bootstrap():
+        thread = threading.Thread(target=bootstrap_client, args=(id, config_path,))
+        raft_threads[id] = thread
+        thread.start()
+    bootstrap()
+    while True:
+        if utils.is_alive(get_addr(id)):
+            break
+        else:
+            if raft_threads[id] is None:
+                bootstrap()
+                logging.warning("%s spawn failed, restarting..." % id)
+    logging.debug("%s alive" % id)
 
 def kick_off(id):
     utils.kick_off(get_addr(id), raft_threads[id])
-    raft_threads[id] = None
+    wait_dead(id)
+    while True:
+        if raft_threads[id] is None:
+            break
 
 def request_log(id):
     return utils.request_log(get_addr(id))
@@ -86,7 +103,7 @@ def append_log(id, log):
 
 def find_role(clusters, role):
     result = []
-    for (k, v) in clusters.items():
+    for (k, _) in clusters.items():
         try:
             log = request_log(k)
             if log.role == role:
@@ -107,12 +124,19 @@ def find_candidates(clusters):
 
 def request_all_logs(clusters):
     logs = {}
-    for (k, v) in clusters.items():
+    for (k, _) in clusters.items():
         try:
             logs[k] = request_log(k)
         except grpc.RpcError:
             logging.warning("request to %s failed", k)
 
     return logs
-    
+
+def wait_alive(id):
+    utils.wait_alive(get_addr(id))
+
+def wait_dead(id):
+    utils.wait_dead(get_addr(id))
+        
 generate_config()
+

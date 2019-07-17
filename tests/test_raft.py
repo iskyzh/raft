@@ -8,7 +8,7 @@ def test_select_leader(clusters):
 
 def count_role(logs, role):
     cnt = 0
-    for (k, log) in logs.items():
+    for (_, log) in logs.items():
         if log.role == role:
             cnt = cnt + 1
     return cnt
