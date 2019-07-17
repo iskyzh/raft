@@ -12,7 +12,8 @@ install:
   - pushd . && cd ~
   - if [ ! -f "vcpkg/bootstrap-vcpkg.sh" ] ; then git clone https://github.com/Microsoft/vcpkg.git && cd vcpkg && ./bootstrap-vcpkg.sh && cd ..; fi
   - cd vcpkg && ./vcpkg install gtest grpc protobuf cpptoml && rm -rf buildtrees
-  - export VCPKGROOT=$(pwd)
+  - export VCPKG_ROOT=$(pwd)
+  - export VCPKG_DEFAULT_TRIPLET=x64-linux
 before_script:
   - popd
   - cd protos && ./generate.sh && cd ..
