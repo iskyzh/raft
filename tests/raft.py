@@ -59,17 +59,17 @@ def generate_config():
 
     logging.info('config generation complete')
 
-def bootstrap_client(instance_name, config_path):
+def bootstrap_client(id, config_path):
     args = [executable, config_path]
     if verbose:
         args = [executable, config_path, "--verbose"]
     try:
-        subprocess.run(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        subprocess.run(args=args)
     except Exception as e:
-        logging.warning("%s errored %s" % (instance_name, e))
+        logging.warning("%s errored %s" % (id, e))
         # raise e
-    logging.debug("%s detached" % instance_name)
-    raft_threads[instance_name] = None
+    logging.debug("%s detached" % id)
+    raft_threads[id] = None
 
 def spawn_client_thread(id):
     config_path = config_file(id)

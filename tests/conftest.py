@@ -7,6 +7,7 @@ import time
 def clusters(): 
     for (id, _) in raft.clusters.items():
         spawn_client_thread(id)
+    time.sleep(1)
     yield raft.clusters
     for (id, _) in raft.clusters.items():
         kick_off(id)

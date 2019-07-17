@@ -40,6 +40,10 @@ def test_sync_log_after_leader_kickoff(clusters):
     append_log(leader, "test1")
     append_log(leader, "test2")
     append_log(leader, "test3")
+    time.sleep(3)
+    logs = request_all_logs(clusters)
+    for (k, _) in clusters.items():
+        assert logs[k].logs == ["test1", "test2", "test3"]
     kick_off(leader)
     spawn_client_thread(leader)
     time.sleep(3)
@@ -48,5 +52,5 @@ def test_sync_log_after_leader_kickoff(clusters):
     leader = leaders[0]
     logs = request_all_logs(clusters)
     assert logs[leader].logs == ["test1", "test2", "test3"]
-    for (k, v) in clusters.items():
+    for (k, _) in clusters.items():
         assert logs[k].logs == ["test1", "test2", "test3"]

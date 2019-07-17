@@ -128,7 +128,7 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
                     if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
                 }
                 auto entries = req_app->entries();
-                if (entries != "" && !logs.exists(next_idx)) logs.append_log(make_pair(req_app->term(), req_app->entries()));
+                if (entries != "" && !logs.exists(next_idx)) logs.append_log(make_pair(req_app->entries_term(), req_app->entries()));
                 if (req_app->leadercommit() > commit_index) {
                     commit_index = req_app->leadercommit();
                     // TODO: apply to state machine
@@ -209,7 +209,10 @@ void Instance::sync_log() {
         req_app->set_prevlogindex(log_idx);
         req_app->set_prevlogterm(log_idx == -1 ? 0 : logs.logs[log_idx].first);
         if (next_idx >= logs.logs.size()) req_app->set_entries("");
-        else req_app->set_entries(logs.logs[next_idx].second);
+        else {
+            req_app->set_entries_term(logs.logs[next_idx].first);
+            req_app->set_entries(logs.logs[next_idx].second);
+        }
         req_app->set_leadercommit(commit_index);
         rpc->send(cluster, req_app);
     }

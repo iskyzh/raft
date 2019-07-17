@@ -272,7 +272,6 @@ bool append_entry_to(MockRPCService &service, const string &to, const string &fr
     return false;
 }
 
-
 TEST(Leader, ShouldHeartbeatUponElection) {
     MockRPCService service;
     Instance instance("test0", service.get_client("test0"));

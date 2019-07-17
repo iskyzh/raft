@@ -634,9 +634,9 @@ class AppendEntriesRequest :
   std::string* release_leaderid();
   void set_allocated_leaderid(std::string* leaderid);
 
-  // bytes entries = 5;
+  // bytes entries = 6;
   void clear_entries();
-  static const int kEntriesFieldNumber = 5;
+  static const int kEntriesFieldNumber = 6;
   const std::string& entries() const;
   void set_entries(const std::string& value);
   void set_entries(std::string&& value);
@@ -664,9 +664,15 @@ class AppendEntriesRequest :
   ::PROTOBUF_NAMESPACE_ID::uint32 prevlogterm() const;
   void set_prevlogterm(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
-  // uint32 leaderCommit = 6;
+  // uint32 entries_term = 5;
+  void clear_entries_term();
+  static const int kEntriesTermFieldNumber = 5;
+  ::PROTOBUF_NAMESPACE_ID::uint32 entries_term() const;
+  void set_entries_term(::PROTOBUF_NAMESPACE_ID::uint32 value);
+
+  // uint32 leaderCommit = 7;
   void clear_leadercommit();
-  static const int kLeaderCommitFieldNumber = 6;
+  static const int kLeaderCommitFieldNumber = 7;
   ::PROTOBUF_NAMESPACE_ID::uint32 leadercommit() const;
   void set_leadercommit(::PROTOBUF_NAMESPACE_ID::uint32 value);
 
@@ -680,6 +686,7 @@ class AppendEntriesRequest :
   ::PROTOBUF_NAMESPACE_ID::uint32 term_;
   ::PROTOBUF_NAMESPACE_ID::uint32 prevlogindex_;
   ::PROTOBUF_NAMESPACE_ID::uint32 prevlogterm_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 entries_term_;
   ::PROTOBUF_NAMESPACE_ID::uint32 leadercommit_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_raft_2eproto;
@@ -1646,7 +1653,21 @@ inline void AppendEntriesRequest::set_prevlogterm(::PROTOBUF_NAMESPACE_ID::uint3
   // @@protoc_insertion_point(field_set:AppendEntriesRequest.prevLogTerm)
 }
 
-// bytes entries = 5;
+// uint32 entries_term = 5;
+inline void AppendEntriesRequest::clear_entries_term() {
+  entries_term_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 AppendEntriesRequest::entries_term() const {
+  // @@protoc_insertion_point(field_get:AppendEntriesRequest.entries_term)
+  return entries_term_;
+}
+inline void AppendEntriesRequest::set_entries_term(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  entries_term_ = value;
+  // @@protoc_insertion_point(field_set:AppendEntriesRequest.entries_term)
+}
+
+// bytes entries = 6;
 inline void AppendEntriesRequest::clear_entries() {
   entries_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -1697,7 +1718,7 @@ inline void AppendEntriesRequest::set_allocated_entries(std::string* entries) {
   // @@protoc_insertion_point(field_set_allocated:AppendEntriesRequest.entries)
 }
 
-// uint32 leaderCommit = 6;
+// uint32 leaderCommit = 7;
 inline void AppendEntriesRequest::clear_leadercommit() {
   leadercommit_ = 0u;
 }

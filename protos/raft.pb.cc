@@ -213,6 +213,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_raft_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, leaderid_),
   PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, prevlogindex_),
   PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, prevlogterm_),
+  PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, entries_term_),
   PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, entries_),
   PROTOBUF_FIELD_OFFSET(::AppendEntriesRequest, leadercommit_),
   ~0u,  // no _has_bits_
@@ -253,11 +254,11 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 5, -1, sizeof(::RequestVoteRequest)},
   { 14, -1, sizeof(::RequestVoteReply)},
   { 22, -1, sizeof(::AppendEntriesRequest)},
-  { 33, -1, sizeof(::AppendEntriesReply)},
-  { 42, -1, sizeof(::AppendLogRequest)},
-  { 48, -1, sizeof(::AppendLogReply)},
-  { 53, -1, sizeof(::RequestLogRequest)},
-  { 58, -1, sizeof(::RequestLogReply)},
+  { 34, -1, sizeof(::AppendEntriesReply)},
+  { 43, -1, sizeof(::AppendLogRequest)},
+  { 49, -1, sizeof(::AppendLogReply)},
+  { 54, -1, sizeof(::RequestLogRequest)},
+  { 59, -1, sizeof(::RequestLogReply)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -277,25 +278,26 @@ const char descriptor_table_protodef_raft_2eproto[] =
   "st\022\014\n\004term\030\001 \001(\r\022\023\n\013candidateId\030\002 \001(\t\022\024\n"
   "\014lastLogIndex\030\003 \001(\r\022\023\n\013lastLogTerm\030\004 \001(\r"
   "\"C\n\020RequestVoteReply\022\014\n\004from\030\001 \001(\t\022\014\n\004te"
-  "rm\030\002 \001(\r\022\023\n\013voteGranted\030\003 \001(\r\"\210\001\n\024Append"
+  "rm\030\002 \001(\r\022\023\n\013voteGranted\030\003 \001(\r\"\236\001\n\024Append"
   "EntriesRequest\022\014\n\004term\030\001 \001(\r\022\020\n\010leaderId"
   "\030\002 \001(\t\022\024\n\014prevLogIndex\030\003 \001(\r\022\023\n\013prevLogT"
-  "erm\030\004 \001(\r\022\017\n\007entries\030\005 \001(\014\022\024\n\014leaderComm"
-  "it\030\006 \001(\r\"Z\n\022AppendEntriesReply\022\014\n\004from\030\001"
-  " \001(\t\022\014\n\004term\030\002 \001(\r\022\017\n\007success\030\003 \001(\r\022\027\n\017l"
-  "astAgreedIndex\030\004 \001(\r\"\037\n\020AppendLogRequest"
-  "\022\013\n\003log\030\001 \001(\t\"\020\n\016AppendLogReply\"\023\n\021Reque"
-  "stLogRequest\"-\n\017RequestLogReply\022\014\n\004role\030"
-  "\001 \001(\t\022\014\n\004logs\030\002 \003(\t2\302\001\n\004Raft\022+\n\013RequestV"
-  "ote\022\023.RequestVoteRequest\032\005.Void\"\000\022+\n\rOnR"
-  "equestVote\022\021.RequestVoteReply\032\005.Void\"\000\022/"
-  "\n\rAppendEntries\022\025.AppendEntriesRequest\032\005"
-  ".Void\"\000\022/\n\017OnAppendEntries\022\023.AppendEntri"
-  "esReply\032\005.Void\"\0002\247\001\n\007Control\0221\n\tAppendLo"
-  "g\022\021.AppendLogRequest\032\017.AppendLogReply\"\000\022"
-  "4\n\nRequestLog\022\022.RequestLogRequest\032\020.Requ"
-  "estLogReply\"\000\022\032\n\010Shutdown\022\005.Void\032\005.Void\""
-  "\000\022\027\n\005Alive\022\005.Void\032\005.Void\"\000b\006proto3"
+  "erm\030\004 \001(\r\022\024\n\014entries_term\030\005 \001(\r\022\017\n\007entri"
+  "es\030\006 \001(\014\022\024\n\014leaderCommit\030\007 \001(\r\"Z\n\022Append"
+  "EntriesReply\022\014\n\004from\030\001 \001(\t\022\014\n\004term\030\002 \001(\r"
+  "\022\017\n\007success\030\003 \001(\r\022\027\n\017lastAgreedIndex\030\004 \001"
+  "(\r\"\037\n\020AppendLogRequest\022\013\n\003log\030\001 \001(\t\"\020\n\016A"
+  "ppendLogReply\"\023\n\021RequestLogRequest\"-\n\017Re"
+  "questLogReply\022\014\n\004role\030\001 \001(\t\022\014\n\004logs\030\002 \003("
+  "\t2\302\001\n\004Raft\022+\n\013RequestVote\022\023.RequestVoteR"
+  "equest\032\005.Void\"\000\022+\n\rOnRequestVote\022\021.Reque"
+  "stVoteReply\032\005.Void\"\000\022/\n\rAppendEntries\022\025."
+  "AppendEntriesRequest\032\005.Void\"\000\022/\n\017OnAppen"
+  "dEntries\022\023.AppendEntriesReply\032\005.Void\"\0002\247"
+  "\001\n\007Control\0221\n\tAppendLog\022\021.AppendLogReque"
+  "st\032\017.AppendLogReply\"\000\0224\n\nRequestLog\022\022.Re"
+  "questLogRequest\032\020.RequestLogReply\"\000\022\032\n\010S"
+  "hutdown\022\005.Void\032\005.Void\"\000\022\027\n\005Alive\022\005.Void\032"
+  "\005.Void\"\000b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_raft_2eproto_deps[1] = {
 };
@@ -313,7 +315,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_raf
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_raft_2eproto_once;
 static bool descriptor_table_raft_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_raft_2eproto = {
-  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 914,
+  &descriptor_table_raft_2eproto_initialized, descriptor_table_protodef_raft_2eproto, "raft.proto", 936,
   &descriptor_table_raft_2eproto_once, descriptor_table_raft_2eproto_sccs, descriptor_table_raft_2eproto_deps, 9, 0,
   schemas, file_default_instances, TableStruct_raft_2eproto::offsets,
   file_level_metadata_raft_2eproto, 9, file_level_enum_descriptors_raft_2eproto, file_level_service_descriptors_raft_2eproto,
@@ -1323,6 +1325,7 @@ const int AppendEntriesRequest::kTermFieldNumber;
 const int AppendEntriesRequest::kLeaderIdFieldNumber;
 const int AppendEntriesRequest::kPrevLogIndexFieldNumber;
 const int AppendEntriesRequest::kPrevLogTermFieldNumber;
+const int AppendEntriesRequest::kEntriesTermFieldNumber;
 const int AppendEntriesRequest::kEntriesFieldNumber;
 const int AppendEntriesRequest::kLeaderCommitFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -1428,16 +1431,23 @@ const char* AppendEntriesRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAM
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // bytes entries = 5;
+      // uint32 entries_term = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 42)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          entries_term_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // bytes entries = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(mutable_entries(), ptr, ctx);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 leaderCommit = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+      // uint32 leaderCommit = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 56)) {
           leadercommit_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
@@ -1526,9 +1536,22 @@ bool AppendEntriesRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // bytes entries = 5;
+      // uint32 entries_term = 5;
       case 5: {
-        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (42 & 0xFF)) {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (40 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &entries_term_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bytes entries = 6;
+      case 6: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (50 & 0xFF)) {
           DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_entries()));
         } else {
@@ -1537,9 +1560,9 @@ bool AppendEntriesRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 leaderCommit = 6;
-      case 6: {
-        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (48 & 0xFF)) {
+      // uint32 leaderCommit = 7;
+      case 7: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (56 & 0xFF)) {
 
           DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
                    ::PROTOBUF_NAMESPACE_ID::uint32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_UINT32>(
@@ -1602,15 +1625,20 @@ void AppendEntriesRequest::SerializeWithCachedSizes(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(4, this->prevlogterm(), output);
   }
 
-  // bytes entries = 5;
-  if (this->entries().size() > 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBytesMaybeAliased(
-      5, this->entries(), output);
+  // uint32 entries_term = 5;
+  if (this->entries_term() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(5, this->entries_term(), output);
   }
 
-  // uint32 leaderCommit = 6;
+  // bytes entries = 6;
+  if (this->entries().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBytesMaybeAliased(
+      6, this->entries(), output);
+  }
+
+  // uint32 leaderCommit = 7;
   if (this->leadercommit() != 0) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(6, this->leadercommit(), output);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32(7, this->leadercommit(), output);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1652,16 +1680,21 @@ void AppendEntriesRequest::SerializeWithCachedSizes(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(4, this->prevlogterm(), target);
   }
 
-  // bytes entries = 5;
+  // uint32 entries_term = 5;
+  if (this->entries_term() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->entries_term(), target);
+  }
+
+  // bytes entries = 6;
   if (this->entries().size() > 0) {
     target =
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBytesToArray(
-        5, this->entries(), target);
+        6, this->entries(), target);
   }
 
-  // uint32 leaderCommit = 6;
+  // uint32 leaderCommit = 7;
   if (this->leadercommit() != 0) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(6, this->leadercommit(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(7, this->leadercommit(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1692,7 +1725,7 @@ size_t AppendEntriesRequest::ByteSizeLong() const {
         this->leaderid());
   }
 
-  // bytes entries = 5;
+  // bytes entries = 6;
   if (this->entries().size() > 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
@@ -1720,7 +1753,14 @@ size_t AppendEntriesRequest::ByteSizeLong() const {
         this->prevlogterm());
   }
 
-  // uint32 leaderCommit = 6;
+  // uint32 entries_term = 5;
+  if (this->entries_term() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->entries_term());
+  }
+
+  // uint32 leaderCommit = 7;
   if (this->leadercommit() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
@@ -1771,6 +1811,9 @@ void AppendEntriesRequest::MergeFrom(const AppendEntriesRequest& from) {
   if (from.prevlogterm() != 0) {
     set_prevlogterm(from.prevlogterm());
   }
+  if (from.entries_term() != 0) {
+    set_entries_term(from.entries_term());
+  }
   if (from.leadercommit() != 0) {
     set_leadercommit(from.leadercommit());
   }
@@ -1808,6 +1851,7 @@ void AppendEntriesRequest::InternalSwap(AppendEntriesRequest* other) {
   swap(term_, other->term_);
   swap(prevlogindex_, other->prevlogindex_);
   swap(prevlogterm_, other->prevlogterm_);
+  swap(entries_term_, other->entries_term_);
   swap(leadercommit_, other->leadercommit_);
 }
 

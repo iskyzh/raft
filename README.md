@@ -11,6 +11,11 @@ The Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.i
 3. Build and run
 4. Use python to run system test
 
+```bash
+export RAFT_EXECUTABLE=$(pwd)/RaftMain
+pytest tests/
+```
+
 ## Design
 
 Some changes were made on Raft RPC described in original paper. This implementation only uses gRPC as a communication tool, which means that we could not correspond a response to a request. Therefore, for `AppendEntries` RPC, prevLogTerm in request should be known when sending AppendEntries reply. Therefore a `lastAgreedLogIndex` field was added.

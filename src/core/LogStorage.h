@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <boost/log/trivial.hpp>
+#include <iostream>
 
 using Log = std::pair<unsigned int, std::string>;
 
@@ -43,8 +44,9 @@ public:
 
     void dump() {
         for (auto &&log : logs) {
-            BOOST_LOG_TRIVIAL(info) << log.first << " " << log.second;
+            std::cout<< log.first << " " << log.second << "\t";
         }
+        std::cout << std::endl;
     }
 };
 

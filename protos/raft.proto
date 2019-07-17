@@ -21,8 +21,9 @@ message AppendEntriesRequest {
     string leaderId = 2;
     uint32 prevLogIndex = 3;
     uint32 prevLogTerm = 4;
-    bytes entries = 5;
-    uint32 leaderCommit = 6;
+    uint32 entries_term = 5;
+    bytes entries = 6;
+    uint32 leaderCommit = 7;
 }
 
 message AppendEntriesReply {

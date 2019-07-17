@@ -16,7 +16,7 @@ def kick_off_rpc(addr):
 def alive(addr):
     channel = grpc.insecure_channel(addr)
     stub = raft_pb2_grpc.ControlStub(channel)
-    response = stub.Alive(raft_pb2.Void(), timeout=1)
+    response = stub.Alive(raft_pb2.Void(), timeout=0.5)
     channel.close()
     return response
 

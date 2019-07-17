@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\nraft.proto\"\x06\n\x04Void\"b\n\x12RequestVoteRequest\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63\x61ndidateId\x18\x02 \x01(\t\x12\x14\n\x0clastLogIndex\x18\x03 \x01(\r\x12\x13\n\x0blastLogTerm\x18\x04 \x01(\r\"C\n\x10RequestVoteReply\x12\x0c\n\x04\x66rom\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\x12\x13\n\x0bvoteGranted\x18\x03 \x01(\r\"\x88\x01\n\x14\x41ppendEntriesRequest\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x10\n\x08leaderId\x18\x02 \x01(\t\x12\x14\n\x0cprevLogIndex\x18\x03 \x01(\r\x12\x13\n\x0bprevLogTerm\x18\x04 \x01(\r\x12\x0f\n\x07\x65ntries\x18\x05 \x01(\x0c\x12\x14\n\x0cleaderCommit\x18\x06 \x01(\r\"Z\n\x12\x41ppendEntriesReply\x12\x0c\n\x04\x66rom\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\x12\x0f\n\x07success\x18\x03 \x01(\r\x12\x17\n\x0flastAgreedIndex\x18\x04 \x01(\r\"\x1f\n\x10\x41ppendLogRequest\x12\x0b\n\x03log\x18\x01 \x01(\t\"\x10\n\x0e\x41ppendLogReply\"\x13\n\x11RequestLogRequest\"-\n\x0fRequestLogReply\x12\x0c\n\x04role\x18\x01 \x01(\t\x12\x0c\n\x04logs\x18\x02 \x03(\t2\xc2\x01\n\x04Raft\x12+\n\x0bRequestVote\x12\x13.RequestVoteRequest\x1a\x05.Void\"\x00\x12+\n\rOnRequestVote\x12\x11.RequestVoteReply\x1a\x05.Void\"\x00\x12/\n\rAppendEntries\x12\x15.AppendEntriesRequest\x1a\x05.Void\"\x00\x12/\n\x0fOnAppendEntries\x12\x13.AppendEntriesReply\x1a\x05.Void\"\x00\x32\xa7\x01\n\x07\x43ontrol\x12\x31\n\tAppendLog\x12\x11.AppendLogRequest\x1a\x0f.AppendLogReply\"\x00\x12\x34\n\nRequestLog\x12\x12.RequestLogRequest\x1a\x10.RequestLogReply\"\x00\x12\x1a\n\x08Shutdown\x12\x05.Void\x1a\x05.Void\"\x00\x12\x17\n\x05\x41live\x12\x05.Void\x1a\x05.Void\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\nraft.proto\"\x06\n\x04Void\"b\n\x12RequestVoteRequest\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x13\n\x0b\x63\x61ndidateId\x18\x02 \x01(\t\x12\x14\n\x0clastLogIndex\x18\x03 \x01(\r\x12\x13\n\x0blastLogTerm\x18\x04 \x01(\r\"C\n\x10RequestVoteReply\x12\x0c\n\x04\x66rom\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\x12\x13\n\x0bvoteGranted\x18\x03 \x01(\r\"\x9e\x01\n\x14\x41ppendEntriesRequest\x12\x0c\n\x04term\x18\x01 \x01(\r\x12\x10\n\x08leaderId\x18\x02 \x01(\t\x12\x14\n\x0cprevLogIndex\x18\x03 \x01(\r\x12\x13\n\x0bprevLogTerm\x18\x04 \x01(\r\x12\x14\n\x0c\x65ntries_term\x18\x05 \x01(\r\x12\x0f\n\x07\x65ntries\x18\x06 \x01(\x0c\x12\x14\n\x0cleaderCommit\x18\x07 \x01(\r\"Z\n\x12\x41ppendEntriesReply\x12\x0c\n\x04\x66rom\x18\x01 \x01(\t\x12\x0c\n\x04term\x18\x02 \x01(\r\x12\x0f\n\x07success\x18\x03 \x01(\r\x12\x17\n\x0flastAgreedIndex\x18\x04 \x01(\r\"\x1f\n\x10\x41ppendLogRequest\x12\x0b\n\x03log\x18\x01 \x01(\t\"\x10\n\x0e\x41ppendLogReply\"\x13\n\x11RequestLogRequest\"-\n\x0fRequestLogReply\x12\x0c\n\x04role\x18\x01 \x01(\t\x12\x0c\n\x04logs\x18\x02 \x03(\t2\xc2\x01\n\x04Raft\x12+\n\x0bRequestVote\x12\x13.RequestVoteRequest\x1a\x05.Void\"\x00\x12+\n\rOnRequestVote\x12\x11.RequestVoteReply\x1a\x05.Void\"\x00\x12/\n\rAppendEntries\x12\x15.AppendEntriesRequest\x1a\x05.Void\"\x00\x12/\n\x0fOnAppendEntries\x12\x13.AppendEntriesReply\x1a\x05.Void\"\x00\x32\xa7\x01\n\x07\x43ontrol\x12\x31\n\tAppendLog\x12\x11.AppendLogRequest\x1a\x0f.AppendLogReply\"\x00\x12\x34\n\nRequestLog\x12\x12.RequestLogRequest\x1a\x10.RequestLogReply\"\x00\x12\x1a\n\x08Shutdown\x12\x05.Void\x1a\x05.Void\"\x00\x12\x17\n\x05\x41live\x12\x05.Void\x1a\x05.Void\"\x00\x62\x06proto3')
 )
 
 
@@ -183,15 +183,22 @@ _APPENDENTRIESREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='entries', full_name='AppendEntriesRequest.entries', index=4,
-      number=5, type=12, cpp_type=9, label=1,
+      name='entries_term', full_name='AppendEntriesRequest.entries_term', index=4,
+      number=5, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='entries', full_name='AppendEntriesRequest.entries', index=5,
+      number=6, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='leaderCommit', full_name='AppendEntriesRequest.leaderCommit', index=5,
-      number=6, type=13, cpp_type=3, label=1,
+      name='leaderCommit', full_name='AppendEntriesRequest.leaderCommit', index=6,
+      number=7, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -209,7 +216,7 @@ _APPENDENTRIESREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=192,
-  serialized_end=328,
+  serialized_end=350,
 )
 
 
@@ -260,8 +267,8 @@ _APPENDENTRIESREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=330,
-  serialized_end=420,
+  serialized_start=352,
+  serialized_end=442,
 )
 
 
@@ -291,8 +298,8 @@ _APPENDLOGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=422,
-  serialized_end=453,
+  serialized_start=444,
+  serialized_end=475,
 )
 
 
@@ -315,8 +322,8 @@ _APPENDLOGREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=455,
-  serialized_end=471,
+  serialized_start=477,
+  serialized_end=493,
 )
 
 
@@ -339,8 +346,8 @@ _REQUESTLOGREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=473,
-  serialized_end=492,
+  serialized_start=495,
+  serialized_end=514,
 )
 
 
@@ -377,8 +384,8 @@ _REQUESTLOGREPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=494,
-  serialized_end=539,
+  serialized_start=516,
+  serialized_end=561,
 )
 
 DESCRIPTOR.message_types_by_name['Void'] = _VOID
@@ -463,8 +470,8 @@ _RAFT = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=542,
-  serialized_end=736,
+  serialized_start=564,
+  serialized_end=758,
   methods=[
   _descriptor.MethodDescriptor(
     name='RequestVote',
@@ -514,8 +521,8 @@ _CONTROL = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   serialized_options=None,
-  serialized_start=739,
-  serialized_end=906,
+  serialized_start=761,
+  serialized_end=928,
   methods=[
   _descriptor.MethodDescriptor(
     name='AppendLog',
