@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/skyzh/raft.svg?branch=master)](https://travis-ci.com/skyzh/raft)
 
-The Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.io/](https://raft.github.io/) for original paper.
+Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.io/](https://raft.github.io/) for original paper.
 
 ## Usage
 
@@ -18,10 +18,10 @@ export VCPKG_ROOT="$HOME/vcpkg"
 export VCPKG_DEFAULT_TRIPLET="x64-osx"
 cd protos && ./generate.sh
 ```
-3. Build and run
-4. Use python to run system test
+3. Build and run unit tests
+4. Use python to run system tests
 ```bash
-export RAFT_EXECUTABLE=$(pwd)/RaftMain
+export RAFT_EXECUTABLE=$(pwd)/RaftService
 pytest tests/
 ```
 
@@ -37,11 +37,15 @@ For other reply RPCs, we should add sender field.
 Personally I would like to break down Raft protocol to many small 
 parts as it is more convenient to test.
 
-`core/` contains core Raft algorithm.
+`core/` contains core Raft algorithm. The core algorithm (`Instance.cpp`) contains
+only 200+ lines of code.
 
-`rpc/` contains one RPC implementation with gRPC.
+`rpc/` contains one RPC implementation with gRPC. Here I choose single-thread asynchronized
+implementation. All RPCs requests are pushed into a lock-free queue, and then are processed
+in the event-loop thread. This choice leads to the split of RPC request and response message
+described above. Therefore, thread lock usage is eliminated.
 
-In `src/`, `mock_main.cpp` can be used to mock a Raft cluster with RPC 'events',
+In `src/`, `mock_main.cpp` can be used to mock a Raft cluster with 'events',
 which means that there're no RPC requests and all RPC are simulated with
 events and callbacks. You may adjust `drop_rate` and `delay` to mock an 
 unstable network. You may add events to simulate events in network. 
@@ -60,5 +64,4 @@ executable, build a 5-node cluster and test it with different conditions.
 # Todo
 
 - [ ] Async log read and write
-- [ ] Test section 5.4
 - [ ] Cluster membership changes

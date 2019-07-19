@@ -125,9 +125,8 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
                     BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append " << log_append->logs.size()
                                             << " entries";
                     for (int i = 0; i < 5 && i < log_append->logs.size(); i++) {
-                        std::cout << log_append->logs[i] << " ";
+                        BOOST_LOG_TRIVIAL(debug) << log_append->logs[i];
                     }
-                    std::cout << std::endl;
                 }
             }
             delete event;
