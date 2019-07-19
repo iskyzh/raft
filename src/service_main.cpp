@@ -117,12 +117,17 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
                     BOOST_LOG_TRIVIAL(info) << inst->id << " node offline";
                     inst->__debug_offline = true;
                 }
-            } else if (auto log_append = dynamic_cast<RaftControl::LogAppendEvent*> (event)) {
+            } else if (auto log_append = dynamic_cast<RaftControl::LogAppendEvent *> (event)) {
                 if (inst->role == LEADER) {
                     for (auto &&entry : log_append->logs) {
                         inst->append_entry(entry);
                     }
-                    BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append " << log_append->logs.size() << " entries";
+                    BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append " << log_append->logs.size()
+                                            << " entries";
+                    for (int i = 0; i < 5 && i < log_append->logs.size(); i++) {
+                        std::cout << log_append->logs[i] << " ";
+                    }
+                    std::cout << std::endl;
                 }
             }
             delete event;
@@ -135,7 +140,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
 int main(int argc, char **argv) {
     namespace logging = boost::log;
     if (argc == 3 && strcmp(argv[2], "--verbose") == 0)
-        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
+        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::debug);
     else
         logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::error);
 

@@ -30,7 +30,7 @@ def online(addr):
 def alive(addr):
     channel = grpc.insecure_channel(addr)
     stub = raft_pb2_grpc.ControlStub(channel)
-    response = stub.Alive(raft_pb2.Void(), timeout=0.5)
+    response = stub.Alive(raft_pb2.Void(), timeout=0.3)
     channel.close()
     return response
 

@@ -123,7 +123,7 @@ public:
             status = stub[to]->OnAppendEntries(&context, *res_app, &reply);
         }
         if (!status.ok()) {
-            BOOST_LOG_TRIVIAL(warning) << "rpc call failed";
+            BOOST_LOG_TRIVIAL(trace) << "rpc call failed";
         }
     }
 

@@ -54,16 +54,19 @@ def test_purge_log_after_leader_offline(clusters):
     assert len(leaders) == 1
     leader = leaders[0]
     append_logs(leader, ["test1", "test2", "test3"])
-    time.sleep(3)
+    time.sleep(1)
     offline(leader)
+    time.sleep(1)
     append_logs(leader, ["test4", "test5", "test6"])
+    time.sleep(1)
+    leaders = find_leaders(clusters)
+    assert len(leaders) == 2
+    new_leader = leaders[0]
+    append_logs(new_leader, ["test7", "test8", "test9"])
     time.sleep(3)
     online(leader)
     time.sleep(3)
-    leaders = find_leaders(clusters)
-    assert len(leaders) == 1
-    leader = leaders[0]
     logs = request_all_logs(clusters)
-    assert logs[leader].logs == ["test1", "test2", "test3"]
+    assert logs[leader].logs == ["test1", "test2", "test3", "test7", "test8", "test9"]
     for (k, _) in clusters.items():
-        assert logs[k].logs == ["test1", "test2", "test3"]
+        assert logs[k].logs == ["test1", "test2", "test3", "test7", "test8", "test9"]

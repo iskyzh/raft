@@ -77,7 +77,6 @@ void append_entry(vector<unique_ptr<Instance>> &insts) {
     for (auto &&inst : insts) {
         if (inst->role == LEADER) {
             inst->append_entry(msg);
-            return;
         }
     }
 }
@@ -135,7 +134,7 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
                 BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
                                         << inst->logs.logs.size();
             }
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 20; i++)
                 append_entry(insts);
         }
         while (!mq.empty() && mq.top().should_be_sent_at < get_tick()) {
@@ -148,11 +147,12 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
             auto event = test_events.top();
             test_events.pop();
             if (event.event == "kick_leader") {
-                insts[0]->as_follower();
+                insts[0]->__debug_offline = true;
                 block_leader = true;
                 BOOST_LOG_TRIVIAL(info) << "leader kicked off";
             }
             if (event.event == "restore_leader") {
+                insts[0]->__debug_offline = false;
                 block_leader = false;
                 BOOST_LOG_TRIVIAL(info) << "leader restored";
             }
