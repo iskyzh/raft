@@ -23,7 +23,7 @@ public:
     struct LogAppendEvent : public Event {
         std::vector<std::string> logs;
 
-        LogAppendEvent(const vector<string> &&logs) : logs(logs) {}
+        LogAppendEvent(const vector<string> &logs) : logs(logs) {}
     };
 
     Status AppendLog(grpc::ServerContext *context, const AppendLogRequest *request,
@@ -32,7 +32,7 @@ public:
         for (int i = 0; i < request->log_size(); i++) {
             logs.push_back(request->log(i));
         }
-        client->q.push(new LogAppendEvent(std::move(logs)));
+        client->q.push(new LogAppendEvent(logs));
         return Status::OK;
     }
 

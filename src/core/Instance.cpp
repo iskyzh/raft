@@ -140,7 +140,7 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
             auto res_app = make_shared<AppendEntriesReply>();
             res_app->set_term(current_term);
             res_app->set_success(succeed);
-            res_app->set_lastagreedindex(lst_index);
+            res_app->set_lastagreedindex(std::min(lst_index, logs.last_log_index()));
             res_app->set_from(id);
             rpc->send(req_app->leaderid(), res_app);
         }
