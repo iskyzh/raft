@@ -21,8 +21,8 @@ message AppendEntriesRequest {
     string leaderId = 2;
     uint32 prevLogIndex = 3;
     uint32 prevLogTerm = 4;
-    uint32 entries_term = 5;
-    bytes entries = 6;
+    repeated uint32 entries_term = 5;
+    repeated bytes entries = 6;
     uint32 leaderCommit = 7;
 }
 
@@ -47,7 +47,7 @@ service Raft {
 }
 
 message AppendLogRequest {
-    string log = 1;
+    repeated string log = 1;
 }
 message AppendLogReply {
 }
@@ -55,7 +55,8 @@ message RequestLogRequest {
 }
 message RequestLogReply {
     string role = 1;
-    repeated string logs = 2;
+    uint32 commitIndex = 2;
+    repeated string logs = 3;
 }
 
 service Control {

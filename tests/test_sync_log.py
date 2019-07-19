@@ -12,7 +12,7 @@ def test_sync_log(clusters):
     append_log(leader, "test3")
     time.sleep(1)
     logs = request_all_logs(clusters)
-    for (k, v) in clusters.items():
+    for (k, _) in clusters.items():
         assert logs[k].logs == ["test1", "test2", "test3"]
 
 def test_sync_log_after_follower_kickoff(clusters):
@@ -29,7 +29,7 @@ def test_sync_log_after_follower_kickoff(clusters):
     time.sleep(3)
     logs = request_all_logs(clusters)
     assert logs[leader].logs == ["test1", "test2", "test3"]
-    for (k, v) in clusters.items():
+    for (k, _) in clusters.items():
         assert logs[k].logs == ["test1", "test2", "test3"]
 
 def test_sync_log_after_leader_kickoff(clusters):

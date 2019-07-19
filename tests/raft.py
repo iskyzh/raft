@@ -99,7 +99,10 @@ def request_log(id):
     return utils.request_log(get_addr(id))
 
 def append_log(id, log):
-    return utils.append_log(get_addr(id), log)
+    return utils.append_log(get_addr(id), [log])
+
+def append_logs(id, logs):
+    return utils.append_log(get_addr(id), logs)
 
 def find_role(clusters, role):
     result = []
@@ -145,4 +148,3 @@ def online(id):
     utils.online(get_addr(id))
 
 generate_config()
-

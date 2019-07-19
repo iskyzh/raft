@@ -135,7 +135,8 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
                 BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
                                         << inst->logs.logs.size();
             }
-            append_entry(insts);
+            for (int i = 0; i < 500; i++)
+                append_entry(insts);
         }
         while (!mq.empty() && mq.top().should_be_sent_at < get_tick()) {
             auto rpc = mq.top();

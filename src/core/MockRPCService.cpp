@@ -29,6 +29,7 @@ void MockRPCService::set_callback(on_rpc_cb callback) {
 MockRPCService::MockRPCService() : callback({}) {}
 
 void log_message(const string &from, const string &to, shared_ptr<Message> message) {
+#ifndef NDEBUG
     string result;
     TextFormat::PrintToString(*message, &result);
     std::replace(result.begin(), result.end(), '\n', ' ');
@@ -37,10 +38,10 @@ void log_message(const string &from, const string &to, shared_ptr<Message> messa
     } else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
         BOOST_LOG_TRIVIAL(trace) << from << "->" << to << " request vote reply " << result;
     } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
-        BOOST_LOG_TRIVIAL(trace) << from << "->" << to << " append entry " << result;
-        BOOST_LOG_TRIVIAL(trace) << "entry " << req_app->entries();
+        BOOST_LOG_TRIVIAL(trace) << from << "->" << to << " append entry " << result << " entry_size: " << req_app->entries_size();
     } else if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) {
         BOOST_LOG_TRIVIAL(trace) << from << "->" << to << " append entry reply " << result;
     } else
         BOOST_LOG_TRIVIAL(error) << from << "->" << to << " unknown message " << result;
-};
+#endif
+}

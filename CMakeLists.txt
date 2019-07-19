@@ -27,8 +27,8 @@ target_link_libraries(RaftTest PRIVATE core GTest::GTest GTest::Main)
 add_executable(RaftMockRPC src/grpc_main.cpp src/utils/utils.cpp src/rpc/grpc_client.hpp)
 target_link_libraries(RaftMockRPC core)
 
-add_executable(RaftMain src/service_main.cpp src/utils/utils.cpp)
-target_link_libraries(RaftMain core)
+add_executable(RaftService src/service_main.cpp src/utils/utils.cpp)
+target_link_libraries(RaftService core)
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)

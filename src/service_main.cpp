@@ -14,15 +14,25 @@ public:
     struct ControlEvent : public Event {
         std::string cmd;
         enum TYPE {
-            SHUTDOWN, APPEND, ONLINE, OFFLINE
+            SHUTDOWN, ONLINE, OFFLINE
         } type;
 
         ControlEvent(TYPE type, const std::string &cmd) : cmd(cmd), type(type) {}
     };
 
+    struct LogAppendEvent : public Event {
+        std::vector<std::string> logs;
+
+        LogAppendEvent(const vector<string> &&logs) : logs(logs) {}
+    };
+
     Status AppendLog(grpc::ServerContext *context, const AppendLogRequest *request,
                      AppendLogReply *response) override {
-        client->q.push(new ControlEvent(ControlEvent::APPEND, request->log()));
+        std::vector<std::string> logs;
+        for (int i = 0; i < request->log_size(); i++) {
+            logs.push_back(request->log(i));
+        }
+        client->q.push(new LogAppendEvent(std::move(logs)));
         return Status::OK;
     }
 
@@ -36,6 +46,7 @@ public:
             response->add_logs(log.second);
         }
         response->set_role(inst->get_role_string());
+        response->set_commitindex(inst->commit_index);
         return Status::OK;
     }
 
@@ -99,17 +110,19 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
                     server->Shutdown();
                     delete event;
                     break;
-                } else if (control->type == RaftControl::ControlEvent::APPEND) {
-                    if (inst->role == LEADER) {
-                        inst->append_entry(control->cmd);
-                        BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append entry";
-                    }
                 } else if (control->type == RaftControl::ControlEvent::ONLINE) {
                     inst->__debug_offline = false;
                     BOOST_LOG_TRIVIAL(info) << inst->id << " node online";
                 } else if (control->type == RaftControl::ControlEvent::OFFLINE) {
                     BOOST_LOG_TRIVIAL(info) << inst->id << " node offline";
                     inst->__debug_offline = true;
+                }
+            } else if (auto log_append = dynamic_cast<RaftControl::LogAppendEvent*> (event)) {
+                if (inst->role == LEADER) {
+                    for (auto &&entry : log_append->logs) {
+                        inst->append_entry(entry);
+                    }
+                    BOOST_LOG_TRIVIAL(info) << inst->id << " has requested append " << log_append->logs.size() << " entries";
                 }
             }
             delete event;

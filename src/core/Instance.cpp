@@ -125,17 +125,17 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
                 // log doesn't match
             else if (!logs.probe_log(req_app->prevlogindex(), req_app->prevlogterm())) succeed = false;
             else {
-                auto next_idx = req_app->prevlogindex() + 1;
-                if (logs.exists(next_idx)) {
-                    if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
+                for(unsigned next_idx = req_app->prevlogindex() + 1, cnt = 0; cnt < req_app->entries_size(); cnt++, next_idx++) {
+                    if (logs.exists(next_idx)) {
+                        if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
+                    }
+                    if (!logs.exists(next_idx)) logs.append_log(make_pair(req_app->entries_term(cnt), req_app->entries(cnt)));
                 }
-                auto entries = req_app->entries();
-                if (entries != "" && !logs.exists(next_idx)) logs.append_log(make_pair(req_app->entries_term(), req_app->entries()));
+                lst_index = logs.last_log_index();
                 if (req_app->leadercommit() > commit_index) {
                     commit_index = req_app->leadercommit();
                     // TODO: apply to state machine
                 }
-                lst_index = logs.last_log_index();
             }
             auto res_app = make_shared<AppendEntriesReply>();
             res_app->set_term(current_term);
@@ -210,11 +210,12 @@ void Instance::sync_log() {
         auto next_idx = next_index[cluster];
         req_app->set_prevlogindex(log_idx);
         req_app->set_prevlogterm(log_idx == -1 ? 0 : logs.logs[log_idx].first);
-        if (next_idx >= logs.logs.size()) req_app->set_entries("");
-        else {
-            req_app->set_entries_term(logs.logs[next_idx].first);
-            req_app->set_entries(logs.logs[next_idx].second);
+
+        for (int cnt = 0; cnt < MAX_LOG_TRANSFER && next_idx < logs.logs.size(); cnt++, next_idx++) {
+            req_app->add_entries_term(logs.logs[next_idx].first);
+            req_app->add_entries(logs.logs[next_idx].second);
         }
+
         req_app->set_leadercommit(commit_index);
         rpc->send(cluster, req_app);
     }

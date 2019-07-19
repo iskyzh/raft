@@ -31,6 +31,7 @@ using Cluster = string;
 
 class Instance {
 public:
+    static const unsigned MAX_LOG_TRANSFER = 10;
     unsigned int current_term;
     optional<const string> voted_for;
     LogStorage logs;

@@ -76,11 +76,11 @@ def request_log(addr):
     channel.close()
     return response
 
-def append_log(addr, log):
+def append_log(addr, logs):
     channel = grpc.insecure_channel(addr)
     stub = raft_pb2_grpc.ControlStub(channel)
     req = raft_pb2.AppendLogRequest()
-    req.log = log
+    req.log.extend(logs)
     response = stub.AppendLog(req)
     channel.close()
     return response
