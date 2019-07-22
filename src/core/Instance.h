@@ -80,7 +80,7 @@ public:
     // TODO: remove from parameter as it is no longer used
     void on_rpc(const string& from, shared_ptr<Message> message);
 
-    Term get_term(shared_ptr<Message> message);
+    static Term get_term(shared_ptr<Message> message);
 
     void append_entry(const string& entry);
 };

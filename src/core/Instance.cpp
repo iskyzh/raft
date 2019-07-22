@@ -182,12 +182,13 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
             }
             priority_queue<Index> match_index_heap;
             for (auto &&kv : match_index) {
-                match_index_heap.push(kv.second);
+                auto idx = kv.second;
+                if (logs.exists(idx) && logs.logs[idx].first == current_term) match_index_heap.push(idx);
             }
             for (int i = 0; i < cluster_size() / 2; i++) {
-                match_index_heap.pop();
+                if (!match_index_heap.empty()) match_index_heap.pop(); else break;
             }
-            commit_index = std::max(match_index_heap.top(), commit_index);
+            if (!match_index_heap.empty()) commit_index = std::max(match_index_heap.top(), commit_index);
         }
     }
 }

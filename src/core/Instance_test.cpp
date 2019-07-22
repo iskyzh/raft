@@ -296,7 +296,12 @@ TEST(Leader, ShouldCommit) {
     MockRPCService service;
     Instance instance("test0", service.get_client("test0"));
     set_test_clusters(instance);
+    instance.current_term = 1;
     instance.as_leader();
+    instance.logs.logs.push_back(std::make_pair(1, "1"));
+    instance.logs.logs.push_back(std::make_pair(1, "1"));
+    instance.logs.logs.push_back(std::make_pair(1, "1"));
+    instance.logs.logs.push_back(std::make_pair(1, "1"));
     instance.on_rpc("", make_append_entries_reply("test1", 3, instance.current_term));
     instance.on_rpc("", make_append_entries_reply("test2", 3, instance.current_term));
     instance.on_rpc("", make_append_entries_reply("test3", 3, instance.current_term));
@@ -304,12 +309,25 @@ TEST(Leader, ShouldCommit) {
     EXPECT_EQ(instance.commit_index, 3);
 }
 
-TEST(Leader, ShouldNotCommit) {
+TEST(Leader, ShouldNotCommitWithoutMajority) {
     MockRPCService service;
     Instance instance("test0", service.get_client("test0"));
     set_test_clusters(instance);
     instance.as_leader();
     instance.on_rpc("", make_append_entries_reply("test1", 3, instance.current_term));
     instance.on_rpc("", make_append_entries_reply("test2", 3, instance.current_term));
+    EXPECT_EQ(instance.commit_index, -1);
+}
+
+TEST(Leader, ShouldNotCommitFromPreviousTerm) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+    set_test_clusters(instance);
+    instance.current_term = 2;
+    instance.as_leader();
+    instance.on_rpc("", make_append_entries_reply("test1", 3, 1));
+    instance.on_rpc("", make_append_entries_reply("test2", 3, 1));
+    instance.on_rpc("", make_append_entries_reply("test3", 3, 1));
+    instance.on_rpc("", make_append_entries_reply("test4", 3, 1));
     EXPECT_EQ(instance.commit_index, -1);
 }
