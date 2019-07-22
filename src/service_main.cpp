@@ -102,6 +102,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
         Event *event;
         while (client->q.pop(event)) {
             if (auto rpc = dynamic_cast<RaftRPCClient::RPCMessage *>(event)) {
+                log_message(rpc->from, inst->id, rpc->message);
                 inst->on_rpc(rpc->from, rpc->message);
             } else if (auto control = dynamic_cast<RaftControl::ControlEvent *>(event)) {
                 if (control->type == RaftControl::ControlEvent::SHUTDOWN) {

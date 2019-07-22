@@ -178,7 +178,7 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
                 match_index[res_app->from()] = res_app->lastagreedindex();
                 next_index[res_app->from()] = res_app->lastagreedindex() + 1;
             } else {
-                next_index[res_app->from()] = res_app->lastagreedindex();
+                next_index[res_app->from()] = std::max(res_app->lastagreedindex(), (Index) 0);
             }
             priority_queue<Index> match_index_heap;
             for (auto &&kv : match_index) {
