@@ -79,13 +79,18 @@ def spawn_client_thread(id):
         raft_threads[id] = thread
         thread.start()
     bootstrap()
+    restart_cnt = 30
     while True:
-        if utils.is_alive(get_addr(id)):
+        restart_cnt = restart_cnt - 1
+        if utils.is_alive(get_addr(id)) or restart_cnt < 0:
             break
         else:
             if raft_threads[id] is None:
                 bootstrap()
                 logging.warning("%s spawn failed, restarting..." % id)
+    if restart_cnt < 0:
+        logging.error("spawn failed")
+        exit(-1)
     logging.debug("%s alive" % id)
 
 def kick_off(id):
