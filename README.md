@@ -36,11 +36,11 @@ will retry launching until server is reachable.
 ## Design
 
 Some changes were made on Raft RPC described in original paper. This
-implementation only uses gRPC for node communication, but I split request 
-and reply to 2 RPCs. Therefore ww could not correspond a response to a request.
-For `AppendEntries` RPC, prevLogTerm in request should be known when 
-sending AppendEntries reply. Therefore a `lastAgreedLogIndex` field was added.
-For other reply RPCs, we should add sender field.
+implementation uses gRPC for node communication, but I make request 
+and reply into 2 separate RPCs. Therefore it's not possible to correspond
+a response to a request. For `AppendEntries` RPC, prevLogTerm in request
+should be known when sending AppendEntries reply. Therefore a 
+`lastAgreedLogIndex` field was added. For other reply RPCs, sender field is added.
 
 Personally I would like to break down Raft protocol to many small 
 parts as it is more convenient to test.
