@@ -96,7 +96,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
         if (get_tick() - lst_append_entry >= 1000) {
             lst_append_entry = get_tick();
             BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
-                                    << inst->logs.logs.size();
+                                    << inst->logs.logs.size() << " commit: " << inst->commit_index;
 
         }
         Event *event;

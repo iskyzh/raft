@@ -56,7 +56,7 @@ def test_purge_log_after_leader_offline(clusters):
     append_logs(leader, ["test1", "test2", "test3"])
     time.sleep(1)
     offline(leader)
-    time.sleep(1)
+    time.sleep(3)
     append_logs(leader, ["test4", "test5", "test6"])
     time.sleep(1)
     leaders = find_leaders(clusters)

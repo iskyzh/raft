@@ -6,7 +6,7 @@ message Void {
 message RequestVoteRequest {
     uint32 term = 1;
     string candidateId = 2;
-    uint32 lastLogIndex = 3;
+    int64 lastLogIndex = 3;
     uint32 lastLogTerm = 4;
 }
 
@@ -19,18 +19,18 @@ message RequestVoteReply {
 message AppendEntriesRequest {
     uint32 term = 1;
     string leaderId = 2;
-    uint32 prevLogIndex = 3;
+    int64 prevLogIndex = 3;
     uint32 prevLogTerm = 4;
     repeated uint32 entries_term = 5;
     repeated bytes entries = 6;
-    uint32 leaderCommit = 7;
+    int64 leaderCommit = 7;
 }
 
 message AppendEntriesReply {
     string from = 1;
     uint32 term = 2;
     uint32 success = 3;
-    uint32 lastAgreedIndex = 4;
+    int64 lastAgreedIndex = 4;
 }
 
 // One-way RPC
@@ -55,7 +55,7 @@ message RequestLogRequest {
 }
 message RequestLogReply {
     string role = 1;
-    uint32 commitIndex = 2;
+    int64 commitIndex = 2;
     repeated string logs = 3;
 }
 

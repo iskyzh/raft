@@ -13,7 +13,7 @@ find_package(Boost COMPONENTS log REQUIRED)
 include_directories(protos ${GTEST_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(protos protos/raft.pb.cc protos/raft.grpc.pb.cc)
-add_library(core src/core/Instance.cpp src/core/Instance.h src/core/LogStorage.cpp src/core/LogStorage.h src/core/MockRPCService.cpp src/core/MockRPCService.h src/core/MockRPCClient.cpp src/core/MockRPCClient.h src/core/RPC.h src/utils/utils.h src/core/RPCClient.h)
+add_library(core src/core/Instance.cpp src/core/Instance.h src/core/LogStorage.cpp src/core/LogStorage.h src/core/MockRPCService.cpp src/core/MockRPCService.h src/core/MockRPCClient.cpp src/core/MockRPCClient.h src/core/RPC.h src/utils/utils.h src/core/RPCClient.h src/core/common.h)
 target_link_libraries(core protos ${Boost_LIBRARIES}
         protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite
         gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet)

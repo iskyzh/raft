@@ -282,3 +282,34 @@ TEST(Leader, ShouldHeartbeatUponElection) {
     EXPECT_TRUE(append_entry_to(service, "test3", "test0"));
     EXPECT_TRUE(append_entry_to(service, "test4", "test0"));
 }
+
+shared_ptr<AppendEntriesReply> make_append_entries_reply(std::string from, Index idx, Term term) {
+    auto msg = make_shared<AppendEntriesReply>();
+    msg->set_term(term);
+    msg->set_from(from);
+    msg->set_success(true);
+    msg->set_lastagreedindex(idx);
+    return msg;
+}
+
+TEST(Leader, ShouldCommit) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+    set_test_clusters(instance);
+    instance.as_leader();
+    instance.on_rpc("", make_append_entries_reply("test1", 3, instance.current_term));
+    instance.on_rpc("", make_append_entries_reply("test2", 3, instance.current_term));
+    instance.on_rpc("", make_append_entries_reply("test3", 3, instance.current_term));
+    instance.on_rpc("", make_append_entries_reply("test4", 3, instance.current_term));
+    EXPECT_EQ(instance.commit_index, 3);
+}
+
+TEST(Leader, ShouldNotCommit) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+    set_test_clusters(instance);
+    instance.as_leader();
+    instance.on_rpc("", make_append_entries_reply("test1", 3, instance.current_term));
+    instance.on_rpc("", make_append_entries_reply("test2", 3, instance.current_term));
+    EXPECT_EQ(instance.commit_index, -1);
+}

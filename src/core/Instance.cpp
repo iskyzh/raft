@@ -6,6 +6,7 @@
 #include <memory>
 #include <ctime>
 #include <cstdlib>
+#include <queue>
 #include <boost/log/trivial.hpp>
 
 #include "Instance.h"
@@ -17,10 +18,11 @@ using boost::none;
 using std::string;
 using std::make_shared;
 using std::dynamic_pointer_cast;
+using std::priority_queue;
 
 Instance::Instance(const string &id, shared_ptr<RPCClient> rpc) :
         role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
-        current_term(0), commit_index(0), last_applied(0),
+        current_term(0), commit_index(-1), last_applied(-1),
         __debug_offline(false) {
     std::srand(std::time(nullptr));
 }
@@ -120,16 +122,18 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
             rpc->send(req_vote->candidateid(), res_vote);
         } else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) {
             bool succeed = true;
-            unsigned int lst_index = req_app->prevlogindex();
+            Index lst_index = req_app->prevlogindex();
             if (req_app->term() < this->current_term) succeed = false;
                 // log doesn't match
             else if (!logs.probe_log(req_app->prevlogindex(), req_app->prevlogterm())) succeed = false;
             else {
-                for(unsigned next_idx = req_app->prevlogindex() + 1, cnt = 0; cnt < req_app->entries_size(); cnt++, next_idx++) {
+                for (Index next_idx = req_app->prevlogindex() + 1, cnt = 0;
+                     cnt < req_app->entries_size(); cnt++, next_idx++) {
                     if (logs.exists(next_idx)) {
                         if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
                     }
-                    if (!logs.exists(next_idx)) logs.append_log(make_pair(req_app->entries_term(cnt), req_app->entries(cnt)));
+                    if (!logs.exists(next_idx))
+                        logs.append_log(make_pair(req_app->entries_term(cnt), req_app->entries(cnt)));
                 }
                 lst_index = logs.last_log_index();
                 if (req_app->leadercommit() > commit_index) {
@@ -176,11 +180,19 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
             } else {
                 next_index[res_app->from()] = res_app->lastagreedindex();
             }
+            priority_queue<Index> match_index_heap;
+            for (auto &&kv : match_index) {
+                match_index_heap.push(kv.second);
+            }
+            for (int i = 0; i < cluster_size() / 2; i++) {
+                match_index_heap.pop();
+            }
+            commit_index = std::max(match_index_heap.top(), commit_index);
         }
     }
 }
 
-unsigned int Instance::get_term(shared_ptr<Message> message) {
+Term Instance::get_term(shared_ptr<Message> message) {
     if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) return req_vote->term();
     else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) return res_vote->term();
     else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) return req_app->term();
@@ -196,7 +208,7 @@ void Instance::as_leader() {
     match_index.clear();
     for (auto &&cluster : clusters) {
         next_index[cluster] = logs.last_log_index() + 1;
-        match_index[cluster] = 0;
+        match_index[cluster] = -1;
     }
     sync_log();
 }

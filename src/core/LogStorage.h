@@ -9,16 +9,17 @@
 #include <string>
 #include <boost/log/trivial.hpp>
 #include <iostream>
+#include "common.h"
 
-using Log = std::pair<unsigned int, std::string>;
+using Log = std::pair<Term, std::string>;
 
 class LogStorage {
 public:
     std::vector<Log> logs;
 
-    unsigned int last_log_index() { return logs.size() - 1; }
+    Index last_log_index() { return logs.size() - 1; }
 
-    unsigned int last_log_term() {
+    Term last_log_term() {
         if (logs.empty()) return 0;
         else return logs.back().first;
     }
@@ -27,18 +28,18 @@ public:
         logs.push_back(log);
     }
 
-    bool probe_log(unsigned int log_index, unsigned int log_term) {
+    bool probe_log(Index log_index, Term log_term) {
         if (log_index == -1) return true;
         if (log_index >= logs.size()) return false;
         if (logs[log_index].first != log_term) return false;
         return true;
     }
 
-    bool exists(unsigned int log_index) {
+    bool exists(Index log_index) {
         return log_index < logs.size();
     }
 
-    void purge(unsigned int log_index) {
+    void purge(Index log_index) {
         while (logs.size() > log_index) logs.pop_back();
     }
 

@@ -32,7 +32,7 @@ using Cluster = string;
 class Instance {
 public:
     static const unsigned MAX_LOG_TRANSFER = 50;
-    unsigned int current_term;
+    Term current_term;
     optional<const string> voted_for;
     LogStorage logs;
     Role role;
@@ -46,10 +46,10 @@ public:
     TICK election_begin;
     unsigned election_vote_cnt;
     map <Cluster, bool> voted_for_self;
-    map <Cluster, unsigned int> next_index;
-    map <Cluster, unsigned int> match_index;
-    unsigned int commit_index;
-    unsigned int last_applied;
+    map <Cluster, Index> next_index;
+    map <Cluster, Index> match_index;
+    Index commit_index;
+    Index last_applied;
     
     bool __debug_offline;
 
@@ -77,9 +77,10 @@ public:
 
     unsigned cluster_size();
 
+    // TODO: remove from parameter as it is no longer used
     void on_rpc(const string& from, shared_ptr<Message> message);
 
-    unsigned int get_term(shared_ptr<Message> message);
+    Term get_term(shared_ptr<Message> message);
 
     void append_entry(const string& entry);
 };

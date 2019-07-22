@@ -132,7 +132,7 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
             lst_append_entry = get_tick();
             for (auto &&inst : insts) {
                 BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
-                                        << inst->logs.logs.size();
+                                        << inst->logs.logs.size() << " commit: " << inst->commit_index;
             }
             for (int i = 0; i < 20; i++)
                 append_entry(insts);

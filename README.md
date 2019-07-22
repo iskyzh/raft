@@ -19,11 +19,19 @@ export VCPKG_DEFAULT_TRIPLET="x64-osx"
 cd protos && ./generate.sh
 ```
 3. Build and run unit tests
+```bash
+cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+cd build && cmake --build .
+./RaftTest
+export RAFT_EXECUTABLE=$(pwd)/RaftService
+```
 4. Use python to run system tests
 ```bash
-export RAFT_EXECUTABLE=$(pwd)/RaftService
 pytest tests/
 ```
+
+On macOS, there'll be some problems with launching subprocess in Python. Testing script
+will retry launching until server is reachable.
 
 ## Design
 
@@ -64,4 +72,5 @@ executable, build a 5-node cluster and test it with different conditions.
 # Todo
 
 - [ ] Async log read and write
+- [ ] Test section 5.4
 - [ ] Cluster membership changes
