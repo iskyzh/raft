@@ -26,7 +26,7 @@ TEST(Instance, Construct) {
 TEST(Instance, GenerateTimeout) {
     Instance instance("test", nullptr);
     EXPECT_LE(instance.generate_timeout(), 300);
-    EXPECT_GT(instance.generate_timeout(), 150);
+    EXPECT_GE(instance.generate_timeout(), 150);
 }
 
 TEST(Instance, SetCluster) {
