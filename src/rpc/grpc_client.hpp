@@ -136,6 +136,7 @@ public:
                     grpc::InsecureChannelCredentials());
             stub[kv.first] = Raft::NewStub(channel);
         }
+        BOOST_LOG_TRIVIAL(info) << id << " clusters updated " << clusters.size();
     }
 
     string server_addr, id;

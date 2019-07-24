@@ -94,6 +94,7 @@ struct TestEvent {
 };
 
 void setup_test_sequence(priority_queue<TestEvent> &test_events) {
+    test_events.push(TestEvent(get_tick() + 1000, "append_entry"));
     test_events.push(TestEvent(get_tick() + 5000, "kick_leader"));
     test_events.push(TestEvent(get_tick() + 10000, "restore_leader"));
 }
@@ -102,8 +103,8 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
     priority_queue<RPCDeferMessage> mq;
     priority_queue<TestEvent> test_events;
     service.set_callback([&insts, &mq](const string &from, const string &to, shared_ptr<Message> message) {
-        const double drop_rate = 0.0;
-        const int delay = 1;
+        const double drop_rate = 0.2;
+        const int delay = 200;
         if (1.0 * std::rand() / RAND_MAX <= drop_rate) {
             // BOOST_LOG_TRIVIAL(trace) << "rpc message dropped";
             return;
@@ -134,8 +135,6 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
                 BOOST_LOG_TRIVIAL(info) << inst->id << " " << inst->get_role_string() << " size: "
                                         << inst->logs.logs.size() << " commit: " << inst->commit_index;
             }
-            for (int i = 0; i < 20; i++)
-                append_entry(insts);
         }
         while (!mq.empty() && mq.top().should_be_sent_at < get_tick()) {
             auto rpc = mq.top();
@@ -146,6 +145,11 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
         while (!test_events.empty() && test_events.top().should_be_triggered_at < get_tick()) {
             auto event = test_events.top();
             test_events.pop();
+            if (event.event == "append_entry") {
+                for (int i = 0; i < 10000; i++)
+                    append_entry(insts);
+            }
+            /*
             if (event.event == "kick_leader") {
                 insts[0]->__debug_offline = true;
                 block_leader = true;
@@ -156,6 +160,7 @@ int start_event_loop(MockRPCService &service, vector<unique_ptr<Instance>> &inst
                 block_leader = false;
                 BOOST_LOG_TRIVIAL(info) << "leader restored";
             }
+             */
         }
     }
     return 0;

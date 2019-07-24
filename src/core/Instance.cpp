@@ -215,7 +215,7 @@ Term Instance::get_term(shared_ptr<Message> message) {
 }
 
 void Instance::as_leader() {
-    BOOST_LOG_TRIVIAL(info) << id << " become leader";
+    BOOST_LOG_TRIVIAL(info) << id << " become leader in clusters of " << clusters_including_self.size();
     role = LEADER;
     next_index.clear();
     match_index.clear();
@@ -275,7 +275,7 @@ void Instance::try_membership_change(const string &entry) {
             set_clusters(known_nodes);
             membership_change_in_progress = true;
         }
-    } catch (ptree_error &e) { return; }
+    } catch (...) { return; }
 }
 
 void Instance::resolve_membership_change() {
