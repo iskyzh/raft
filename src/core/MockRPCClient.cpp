@@ -11,3 +11,7 @@ MockRPCClient::MockRPCClient(MockRPCService *service, const string &id)
 void MockRPCClient::send(const string &to, shared_ptr<Message> message) {
     service->send(id, to, message);
 }
+
+void MockRPCClient::update_clusters(const map<string, string> &clusters) {
+    this->clusters = clusters;
+}

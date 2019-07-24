@@ -26,7 +26,11 @@ public:
 
     MockRPCClient(MockRPCService *service, const string &id);
 
-    void send(const string &to, shared_ptr<Message> message) override ;
+    void send(const string &to, shared_ptr<Message> message) override;
+
+    void update_clusters(const map<string, string> &clusters) override;
+
+    map<string, string> clusters;
 };
 
 #endif //RAFT_MOCKRPCCLIENT_H

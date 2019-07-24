@@ -133,6 +133,10 @@ public:
         send_thread.detach();
     }
 
+    void update_clusters(const map<string, string> &clusters) {
+        this->clusters = clusters;
+    }
+
     string server_addr, id;
     map<string, unique_ptr<Raft::Stub>> stub;
     map<string, string> clusters;

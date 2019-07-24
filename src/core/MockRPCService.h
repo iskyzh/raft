@@ -36,7 +36,7 @@ public:
 
     vector<RPCMessage> message_queue;
 
-    unique_ptr<RPCClient> get_client(const string &sender);
+    shared_ptr<RPCClient> get_client(const string &sender);
 
     void send(const string &from, const string &to, shared_ptr<Message> message);
 

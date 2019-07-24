@@ -6,6 +6,7 @@
 
 #include "Instance.h"
 #include "MockRPCService.h"
+#include "MockRPCClient.h"
 #include "raft.pb.h"
 
 extern TICK __tick;
@@ -344,4 +345,23 @@ TEST(Leader, ShouldNotCommitFromPreviousTerm) {
     instance.on_rpc("", make_append_entries_reply("test3", 3, 1));
     instance.on_rpc("", make_append_entries_reply("test4", 3, 1));
     EXPECT_EQ(instance.commit_index, -1);
+}
+
+// Membership Changes
+TEST(Membership, ShouldNotThrowException) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+    instance.try_membership_change("test_not_json");
+}
+
+TEST(Membership, ShouldUpdateClusters) {
+    MockRPCService service;
+    auto _client = service.get_client("test0");
+    auto client = dynamic_pointer_cast<MockRPCClient>(_client);
+    Instance instance("test0", _client);
+    set_test_clusters(instance);
+    instance.try_membership_change(
+            "{ \"type\": \"membership_change\", \"clusters\": {\"test0\": \"127.0.0.1:23333\", \"test1\": \"127.0.0.1:23334\", \"test2\": \"127.0.0.1:23335\", \"test3\": \"127.0.0.1:23336\", \"test4\": \"127.0.0.1:23337\", \"test5\": \"127.0.0.1:23338\", \"test6\": \"127.0.0.1:23339\"} }");
+    EXPECT_EQ(client->clusters["test6"], "127.0.0.1:23339");
+    EXPECT_NE(std::find(instance.clusters.begin(), instance.clusters.end(), "test6"), instance.clusters.end());
 }

@@ -28,6 +28,3 @@ TEST(MockRPC, Construct) {
     EXPECT_EQ(client->id, "test0");
 }
 
-TEST(MockRPC, SendMessage) {
-
-}

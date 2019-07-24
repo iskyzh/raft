@@ -13,8 +13,8 @@
 using std::dynamic_pointer_cast;
 using google::protobuf::TextFormat;
 
-unique_ptr<RPCClient> MockRPCService::get_client(const string &sender) {
-    return std::make_unique<MockRPCClient>(this, sender);
+shared_ptr<RPCClient> MockRPCService::get_client(const string &sender) {
+    return std::make_shared<MockRPCClient>(this, sender);
 }
 
 void MockRPCService::send(const string &from, const string &to, shared_ptr<Message> message) {

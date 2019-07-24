@@ -18,6 +18,7 @@
 
 using boost::none;
 using boost::property_tree::ptree;
+using boost::property_tree::ptree_error;
 using boost::property_tree::read_json;
 using boost::property_tree::write_json;
 using std::string;
@@ -137,8 +138,11 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
                     if (logs.exists(next_idx)) {
                         if (logs.logs[next_idx].first != req_app->term()) logs.purge(next_idx);
                     }
-                    if (!logs.exists(next_idx))
-                        logs.append_log(make_pair(req_app->entries_term(cnt), req_app->entries(cnt)));
+                    if (!logs.exists(next_idx)) {
+                        auto entry = req_app->entries(cnt);
+                        logs.append_log(make_pair(req_app->entries_term(cnt), entry));
+                        try_membership_change(entry);
+                    }
                 }
                 lst_index = logs.last_log_index();
                 if (req_app->leadercommit() > commit_index) {
@@ -244,6 +248,7 @@ void Instance::sync_log() {
 
 void Instance::append_entry(const string &entry) {
     logs.append_log(make_pair(current_term, entry));
+    try_membership_change(entry);
 }
 
 string Instance::get_role_string() {
@@ -253,4 +258,22 @@ string Instance::get_role_string() {
     return "";
 }
 
+void Instance::try_membership_change(const string &entry) {
+    try {
+        ptree pt;
+        std::stringstream ss(entry);
+        read_json(ss, pt);
+        if (pt.get<string>("type") == "membership_change") {
+            auto clusters = pt.get_child("clusters");
+            std::map <string, string> rpc_clusters;
+            std::vector <Cluster> known_nodes;
+            for (auto &v : clusters) {
+                rpc_clusters[v.first] = v.second.get_value<string>();
+                known_nodes.push_back(v.first);
+            }
+            rpc->update_clusters(rpc_clusters);
+            set_clusters(known_nodes);
+        }
+    } catch (ptree_error &e) { return; }
+}
 

@@ -83,6 +83,8 @@ public:
     static Term get_term(shared_ptr<Message> message);
 
     void append_entry(const string& entry);
+
+    void try_membership_change(const string& entry);
 };
 
 
