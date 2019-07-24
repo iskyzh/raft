@@ -260,6 +260,8 @@ string Instance::get_role_string() {
 }
 
 void Instance::try_membership_change(const string &entry) {
+    if (entry.length() <= 1) return;
+    if (entry[0] != '{') return;
     try {
         ptree pt;
         std::stringstream ss(entry);
