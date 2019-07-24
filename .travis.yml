@@ -28,6 +28,7 @@ script:
   - pytest -vs test_control.py
   - pytest -vs test_membership.py
   - pytest -vs test_sync_log.py
+  - pytest -vs . ; exit 0
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE

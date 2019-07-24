@@ -161,6 +161,7 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
         }
     } else if (role == CANDIDATE) {
         if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
+            if (res_vote->term() < current_term) return;
             if (res_vote->votegranted()) {
                 auto from = res_vote->from();
                 if (!voted_for_self[from]) {
