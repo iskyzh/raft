@@ -27,10 +27,13 @@ def test_change_ownership(clusters):
     time.sleep(1)
 
     append_log(leader, new_config())
-    append_log(leader, "test")
-    time.sleep(1)
+    time.sleep(5)
+    
     leaders = find_leaders(clusters)
     assert len(leaders) == 1
+    append_log(leader, "test")
+
+    time.sleep(1)
 
     d_logs = request_all_logs(raft.default_clusters)
     e_logs = request_all_logs(raft.extra_clusters)

@@ -86,12 +86,7 @@ public:
 
     RaftRPCClient(const string &id, const string &server_addr, const map<string, string> &clusters)
             : id(id), server_addr(server_addr), q(65536), clusters(clusters), __debug_supress_rpc_send(false) {
-        for (auto &&kv : clusters) {
-            auto channel = grpc::CreateChannel(
-                    kv.second,
-                    grpc::InsecureChannelCredentials());
-            stub[kv.first] = Raft::NewStub(channel);
-        }
+        update_clusters(clusters);
     }
 
     RaftRPCClient() : RaftRPCClient("test", "127.0.0.1:23333", map<string, string>()) {}
@@ -135,6 +130,12 @@ public:
 
     void update_clusters(const map<string, string> &clusters) override {
         this->clusters = clusters;
+        for (auto &&kv : clusters) {
+            auto channel = grpc::CreateChannel(
+                    kv.second,
+                    grpc::InsecureChannelCredentials());
+            stub[kv.first] = Raft::NewStub(channel);
+        }
     }
 
     string server_addr, id;
