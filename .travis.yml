@@ -23,6 +23,11 @@ script:
   - ./RaftTest
   - export RAFT_EXECUTABLE=$(pwd)/RaftService
   - cd ../tests/ 
+  - pytest -vs test_raft.py
+  - pytest -vs test_batch.py
+  - pytest -vs test_control.py
+  - pytest -vs test_membership.py
+  - pytest -vs test_sync_log.py
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE
