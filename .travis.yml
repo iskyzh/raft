@@ -22,7 +22,7 @@ script:
   - cd build && cmake --build .
   - ./RaftTest
   - export RAFT_EXECUTABLE=$(pwd)/RaftService
-  - cd ../tests/ && pytest -vs
+  - cd ../tests/ && LOGLEVEL=DEBUG VERBOSE=TRUE pytest -vs
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE

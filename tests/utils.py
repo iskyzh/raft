@@ -56,7 +56,7 @@ def wait_dead(addr):
 
 def kick_off(addr, thread):
     if thread is None:
-        logging.warning("already kicked off")
+        logging.info("already kicked off")
         return None
     if not thread.is_alive():
         logging.warning("already detached")
