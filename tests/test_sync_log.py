@@ -61,7 +61,7 @@ def test_purge_log_after_leader_offline(clusters):
     time.sleep(1)
     leaders = find_leaders(clusters)
     assert len(leaders) == 2
-    new_leader = leaders[0]
+    new_leader = leaders[0] if leaders[0] != leader else leaders[1]
     append_logs(new_leader, ["test7", "test8", "test9"])
     time.sleep(3)
     online(leader)

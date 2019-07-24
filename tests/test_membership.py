@@ -16,6 +16,7 @@ def new_config():
     return json.dumps(config)
 
 def test_change_ownership(clusters):
+    time.sleep(3)
     leaders = find_leaders(clusters)
     assert len(leaders) == 1
     leader = leaders[0]
