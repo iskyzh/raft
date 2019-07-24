@@ -53,7 +53,7 @@ TICK Instance::generate_timeout() {
 }
 
 void Instance::as_follower() {
-    BOOST_LOG_TRIVIAL(info) << id << " become follower";
+    BOOST_LOG_TRIVIAL(info) << id << " become follower (term " << current_term << ")";
     role = FOLLOWER;
     follower_timeout = generate_timeout();
     follower_begin = get_tick();
@@ -66,7 +66,7 @@ void Instance::start() {
 }
 
 void Instance::as_candidate() {
-    BOOST_LOG_TRIVIAL(info) << id << " become candidate";
+    BOOST_LOG_TRIVIAL(info) << id << " become candidate (term " << current_term + 1 << ")";
     role = CANDIDATE;
     begin_election();
 }
@@ -215,7 +215,7 @@ Term Instance::get_term(shared_ptr<Message> message) {
 }
 
 void Instance::as_leader() {
-    BOOST_LOG_TRIVIAL(info) << id << " become leader in clusters of " << clusters_including_self.size();
+    BOOST_LOG_TRIVIAL(info) << id << " become leader in clusters (term " << current_term << ") of " << clusters_including_self.size();
     role = LEADER;
     next_index.clear();
     match_index.clear();

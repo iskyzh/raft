@@ -140,7 +140,7 @@ int start_event_loop(shared_ptr<Instance> inst, shared_ptr<RaftRPCClient> client
 int main(int argc, char **argv) {
     namespace logging = boost::log;
     if (argc == 3 && strcmp(argv[2], "--verbose") == 0)
-        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::debug);
+        logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
     else
         logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::error);
 
