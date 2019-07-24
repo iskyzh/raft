@@ -27,7 +27,7 @@ def test_change_ownership(clusters):
     time.sleep(1)
 
     append_log(leader, new_config())
-    time.sleep(5)
+    time.sleep(10)
     
     leaders = find_leaders(clusters)
     assert len(leaders) == 1

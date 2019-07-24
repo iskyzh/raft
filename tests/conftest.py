@@ -11,3 +11,4 @@ def clusters():
     yield raft.default_clusters
     for (id, _) in raft.clusters.items():
         kick_off(id)
+    time.sleep(0.1)
