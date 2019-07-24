@@ -17,7 +17,7 @@ def test_1k_logs_sync(clusters):
     append_logs(leader, rand_logs)
     time.sleep(10)
     logs = request_all_logs(clusters)
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == rand_logs
 
 def test_10k_logs_sync(clusters):
@@ -28,5 +28,5 @@ def test_10k_logs_sync(clusters):
     append_logs(leader, rand_logs)
     time.sleep(30)
     logs = request_all_logs(clusters)
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == rand_logs

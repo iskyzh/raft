@@ -29,9 +29,16 @@ clusters = {"test1": "23333",
             "test2": "23334",
             "test3": "23335",
             "test4": "23336",
-            "test5": "23337" }
+            "test5": "23337",
+            "test6": "23338",
+            "test7": "23339",
+            "test8": "23340",
+            "test9": "23341"}
 
-config = { "server": {}, "clusters": [] }
+default_clusters = ["test1", "test2", "test3", "test4", "test5"]
+extra_clusters = ["test6", "test7", "test8", "test9"]
+
+config = {"server": {}, "clusters": []}
 
 _config_dir = tempfile.TemporaryDirectory()
 config_dir = _config_dir.name
@@ -39,14 +46,17 @@ config_dir = _config_dir.name
 raft_threads = {}
 
 for (k, v) in clusters.items():
-    config["clusters"].append({"name": k, "addr": "127.0.0.1:%s" % v})
+    if k in default_clusters:
+        config["clusters"].append({"name": k, "addr": "127.0.0.1:%s" % v})
 
 def get_addr(id):
     return "127.0.0.1:%s" % clusters[id]
 
+
 def config_file(id):
     return "%s/%s_config.toml" % (config_dir, id)
-    
+
+
 def generate_config():
     for (k, v) in clusters.items():
         config["server"]["name"] = k
@@ -58,6 +68,7 @@ def generate_config():
         logging.debug('config for %s generated' % k)
 
     logging.info('config generation complete')
+
 
 def bootstrap_client(id, config_path):
     args = [executable, config_path]
@@ -71,11 +82,14 @@ def bootstrap_client(id, config_path):
     logging.debug("%s detached" % id)
     raft_threads[id] = None
 
+
 def spawn_client_thread(id):
     config_path = config_file(id)
     logging.debug('running %s with config %s' % (id, config_path))
+
     def bootstrap():
-        thread = threading.Thread(target=bootstrap_client, args=(id, config_path,))
+        thread = threading.Thread(
+            target=bootstrap_client, args=(id, config_path,))
         raft_threads[id] = thread
         thread.start()
     bootstrap()
@@ -93,25 +107,32 @@ def spawn_client_thread(id):
         exit(-1)
     logging.debug("%s alive" % id)
 
+
 def kick_off(id):
+    if not (id in raft_threads):
+        return
     utils.kick_off(get_addr(id), raft_threads[id])
     wait_dead(id)
     while True:
         if raft_threads[id] is None:
             break
 
+
 def request_log(id):
     return utils.request_log(get_addr(id))
+
 
 def append_log(id, log):
     return utils.append_log(get_addr(id), [log])
 
+
 def append_logs(id, logs):
     return utils.append_log(get_addr(id), logs)
 
+
 def find_role(clusters, role):
     result = []
-    for (k, _) in clusters.items():
+    for k in clusters:
         try:
             log = request_log(k)
             if log.role == role:
@@ -121,18 +142,22 @@ def find_role(clusters, role):
 
     return result
 
+
 def find_leaders(clusters):
     return find_role(clusters, "leader")
+
 
 def find_followers(clusters):
     return find_role(clusters, "follower")
 
+
 def find_candidates(clusters):
     return find_role(clusters, "candidate")
 
+
 def request_all_logs(clusters):
     logs = {}
-    for (k, _) in clusters.items():
+    for k in clusters:
         try:
             logs[k] = request_log(k)
         except grpc.RpcError:
@@ -140,16 +165,21 @@ def request_all_logs(clusters):
 
     return logs
 
+
 def wait_alive(id):
     utils.wait_alive(get_addr(id))
+
 
 def wait_dead(id):
     utils.wait_dead(get_addr(id))
 
+
 def offline(id):
     utils.offline(get_addr(id))
 
+
 def online(id):
     utils.online(get_addr(id))
+
 
 generate_config()

@@ -10,7 +10,7 @@ def test_sync_log(clusters):
     append_logs(leader, ["test1", "test2", "test3"])
     time.sleep(3)
     logs = request_all_logs(clusters)
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == ["test1", "test2", "test3"]
 
 def test_sync_log_after_follower_kickoff(clusters):
@@ -26,7 +26,7 @@ def test_sync_log_after_follower_kickoff(clusters):
     time.sleep(3)
     logs = request_all_logs(clusters)
     assert logs[leader].logs == ["test1", "test2", "test3"]
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == ["test1", "test2", "test3"]
 
 def test_sync_log_after_leader_kickoff(clusters):
@@ -36,7 +36,7 @@ def test_sync_log_after_leader_kickoff(clusters):
     append_logs(leader, ["test1", "test2", "test3"])
     time.sleep(3)
     logs = request_all_logs(clusters)
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == ["test1", "test2", "test3"]
     kick_off(leader)
     spawn_client_thread(leader)
@@ -46,7 +46,7 @@ def test_sync_log_after_leader_kickoff(clusters):
     leader = leaders[0]
     logs = request_all_logs(clusters)
     assert logs[leader].logs == ["test1", "test2", "test3"]
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == ["test1", "test2", "test3"]
 
 def test_purge_log_after_leader_offline(clusters):
@@ -68,5 +68,5 @@ def test_purge_log_after_leader_offline(clusters):
     time.sleep(3)
     logs = request_all_logs(clusters)
     assert logs[leader].logs == ["test1", "test2", "test3", "test7", "test8", "test9"]
-    for (k, _) in clusters.items():
+    for k in clusters:
         assert logs[k].logs == ["test1", "test2", "test3", "test7", "test8", "test9"]

@@ -45,12 +45,13 @@ public:
     TICK election_timeout;
     TICK election_begin;
     unsigned election_vote_cnt;
-    map <Cluster, bool> voted_for_self;
-    map <Cluster, Index> next_index;
-    map <Cluster, Index> match_index;
+    map<Cluster, bool> voted_for_self;
+    map<Cluster, Index> next_index;
+    map<Cluster, Index> match_index;
     Index commit_index;
     Index last_applied;
-    
+    bool membership_change_in_progress;
+
     bool __debug_offline;
 
     Instance(const string &id, shared_ptr<RPCClient> rpc);
@@ -73,18 +74,24 @@ public:
 
     string get_role_string();
 
-    void set_clusters(const vector<Cluster>& clusters);
+    void set_clusters(const vector<Cluster> &clusters);
 
     unsigned cluster_size();
 
     // TODO: remove from parameter as it is no longer used
-    void on_rpc(const string& from, shared_ptr<Message> message);
+    void on_rpc(const string &from, shared_ptr<Message> message);
 
     static Term get_term(shared_ptr<Message> message);
 
-    void append_entry(const string& entry);
+    static string get_from(shared_ptr<Message> message);
 
-    void try_membership_change(const string& entry);
+    void append_entry(const string &entry);
+
+    void try_membership_change(const string &entry);
+
+    void resolve_membership_change();
+
+    bool check_in_cluster(const Cluster &c);
 };
 
 

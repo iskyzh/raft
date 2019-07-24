@@ -29,7 +29,7 @@ using std::priority_queue;
 Instance::Instance(const string &id, shared_ptr<RPCClient> rpc) :
         role(FOLLOWER), voted_for(none), id(id), rpc(rpc),
         current_term(0), commit_index(-1), last_applied(-1),
-        __debug_offline(false) {
+        __debug_offline(false), membership_change_in_progress(false) {
     std::srand(std::time(nullptr));
 }
 
@@ -107,6 +107,8 @@ unsigned Instance::cluster_size() {
 void Instance::on_rpc(const string &, shared_ptr<Message> message) {
     if (__debug_offline) return;
     auto message_term = get_term(message);
+    auto message_from = get_from(message);
+    if (!check_in_cluster(message_from)) return;
     if (message_term > current_term) {
         current_term = message_term;
         as_follower();
@@ -161,13 +163,11 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
         if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
             if (res_vote->votegranted()) {
                 auto from = res_vote->from();
-                if (std::find(clusters.begin(), clusters.end(), from) != clusters.end()) {
-                    if (!voted_for_self[from]) {
-                        voted_for_self[from] = true;
-                        ++election_vote_cnt;
-                        if (election_vote_cnt > cluster_size() / 2) {
-                            as_leader();
-                        }
+                if (!voted_for_self[from]) {
+                    voted_for_self[from] = true;
+                    ++election_vote_cnt;
+                    if (election_vote_cnt > cluster_size() / 2) {
+                        as_leader();
                     }
                 }
             }
@@ -265,15 +265,32 @@ void Instance::try_membership_change(const string &entry) {
         read_json(ss, pt);
         if (pt.get<string>("type") == "membership_change") {
             auto clusters = pt.get_child("clusters");
-            std::map <string, string> rpc_clusters;
-            std::vector <Cluster> known_nodes;
+            std::map<string, string> rpc_clusters;
+            std::vector<Cluster> known_nodes;
             for (auto &v : clusters) {
                 rpc_clusters[v.first] = v.second.get_value<string>();
                 known_nodes.push_back(v.first);
             }
             rpc->update_clusters(rpc_clusters);
             set_clusters(known_nodes);
+            membership_change_in_progress = true;
         }
     } catch (ptree_error &e) { return; }
 }
 
+void Instance::resolve_membership_change() {
+    membership_change_in_progress = false;
+}
+
+bool Instance::check_in_cluster(const Cluster &c) {
+    return std::find(clusters.begin(), clusters.end(), c) != clusters.end();
+}
+
+string Instance::get_from(shared_ptr<Message> message) {
+    if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) return req_vote->candidateid();
+    else if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) return res_vote->from();
+    else if (auto req_app = dynamic_pointer_cast<AppendEntriesRequest>(message)) return req_app->leaderid();
+    else if (auto res_app = dynamic_pointer_cast<AppendEntriesReply>(message)) return res_app->from();
+    assert(false);
+    return "";
+}

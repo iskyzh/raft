@@ -5,9 +5,9 @@ import time
 
 @pytest.fixture
 def clusters(): 
-    for (id, _) in raft.clusters.items():
+    for id in raft.default_clusters:
         spawn_client_thread(id)
     time.sleep(1)
-    yield raft.clusters
+    yield raft.default_clusters
     for (id, _) in raft.clusters.items():
         kick_off(id)

@@ -110,7 +110,7 @@ public:
         Void reply;
         Status status;
         if (stub.find(to) == stub.end()) {
-            BOOST_LOG_TRIVIAL(warning) << "rpc destination unreachable";
+            BOOST_LOG_TRIVIAL(warning) << id << " rpc destination unreachable: " << to;
             return;
         }
         if (auto req_vote = dynamic_pointer_cast<RequestVoteRequest>(message)) {
@@ -123,7 +123,7 @@ public:
             status = stub[to]->OnAppendEntries(&context, *res_app, &reply);
         }
         if (!status.ok()) {
-            BOOST_LOG_TRIVIAL(trace) << "rpc call failed";
+            BOOST_LOG_TRIVIAL(trace) << id << " rpc call failed";
         }
     }
 
@@ -133,7 +133,7 @@ public:
         send_thread.detach();
     }
 
-    void update_clusters(const map<string, string> &clusters) {
+    void update_clusters(const map<string, string> &clusters) override {
         this->clusters = clusters;
     }
 

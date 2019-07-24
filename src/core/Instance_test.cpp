@@ -86,6 +86,7 @@ bool voted_for(MockRPCService &service, const string &from, const string &req) {
 TEST(Follower, VoteForCandidate) {
     MockRPCService service;
     Instance instance("test", service.get_client("test"));
+    set_test_clusters(instance);
 
     __tick = 500;
     instance.start();
@@ -103,6 +104,7 @@ TEST(Follower, VoteForCandidate) {
 TEST(Follower, NotVoteForCandidateOfLowerTerm) {
     MockRPCService service;
     Instance instance("test", service.get_client("test"));
+    set_test_clusters(instance);
 
     __tick = 500;
     instance.start();
@@ -121,6 +123,7 @@ TEST(Follower, NotVoteForCandidateOfLowerTerm) {
 TEST(Follower, NotVoteTwice) {
     MockRPCService service;
     Instance instance("test", service.get_client("test"));
+    set_test_clusters(instance);
 
     __tick = 500;
     instance.start();
@@ -256,7 +259,7 @@ TEST(Candidate, ShouldFallbackToFollowerWhenAppend) {
     set_test_clusters(instance);
     instance.as_candidate();
 
-    instance.on_rpc("test1", make_append_entry("test0", instance.current_term));
+    instance.on_rpc("test1", make_append_entry("test1", instance.current_term));
 
     EXPECT_EQ(instance.role, FOLLOWER);
 }
