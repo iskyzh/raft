@@ -22,6 +22,7 @@ def test_1k_logs_sync(clusters):
 
 def test_10k_logs_sync(clusters):
     rand_logs = generate_random_logs(10000)
+    time.sleep(3)
     leaders = find_leaders(clusters)
     assert len(leaders) == 1
     leader = leaders[0]
