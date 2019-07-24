@@ -6,6 +6,7 @@ cache:
   directories:
     - /home/travis/vcpkg/
 install:
+  - pip3 install -r tests/requirements.txt
   - export CC=gcc-9
   - export CXX=g++-9
   - pushd . && cd ~
@@ -20,6 +21,8 @@ script:
   - cmake -H. -GNinja -Bbuild -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
   - cd build && cmake --build .
   - ./RaftTest
+  - export RAFT_EXECUTABLE=$(pwd)/RaftService
+  - cd ../tests/ 
 env:
   - BUILD_TYPE=DEBUG
   - BUILD_TYPE=RELEASE

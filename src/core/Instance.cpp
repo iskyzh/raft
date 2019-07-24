@@ -112,7 +112,6 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
     if (message_term > current_term) {
         current_term = message_term;
         as_follower();
-        return;
     }
     if (role == FOLLOWER) {
         follower_begin = get_tick();
