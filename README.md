@@ -6,9 +6,10 @@ Raft Consensus Algorithm implemented in C++. Refer to [https://raft.github.io/](
 
 ## Usage
 
-1. Use vcpkg or other tools to install build dependencies.
+1. Use vcpkg or other tools to install build dependencies (boost, gtest, grpc, protobuf, cpptoml).
 Use pip to install test dependencies.
 ```bash
+apt install libboost-all-dev
 vcpkg install gtest grpc protobuf cpptoml
 pip3 install -r tests/requirements.txt
 ```

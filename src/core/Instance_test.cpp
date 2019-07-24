@@ -221,6 +221,20 @@ TEST(Candidate, ShouldNotBecomeLeader) {
     EXPECT_EQ(instance.role, CANDIDATE);
 }
 
+TEST(Candidate, ShouldNotBecomeLeaderWhenMembershipChanges) {
+    MockRPCService service;
+    Instance instance("test0", service.get_client("test0"));
+
+    set_test_clusters(instance);
+    instance.as_candidate();
+
+    instance.on_rpc("test1", make_vote_reply("test1", instance.current_term));
+    instance.on_rpc("test233", make_vote_reply("test233", instance.current_term));
+
+
+    EXPECT_EQ(instance.role, CANDIDATE);
+}
+
 TEST(Candidate, ShouldFallbackToFollower) {
     MockRPCService service;
     Instance instance("test0", service.get_client("test0"));

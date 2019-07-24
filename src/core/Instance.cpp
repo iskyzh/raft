@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <queue>
 #include <boost/log/trivial.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "Instance.h"
 
@@ -15,6 +17,9 @@
 #include "raft.grpc.pb.h"
 
 using boost::none;
+using boost::property_tree::ptree;
+using boost::property_tree::read_json;
+using boost::property_tree::write_json;
 using std::string;
 using std::make_shared;
 using std::dynamic_pointer_cast;
@@ -151,11 +156,14 @@ void Instance::on_rpc(const string &, shared_ptr<Message> message) {
     } else if (role == CANDIDATE) {
         if (auto res_vote = dynamic_pointer_cast<RequestVoteReply>(message)) {
             if (res_vote->votegranted()) {
-                if (!voted_for_self[res_vote->from()]) {
-                    voted_for_self[res_vote->from()] = true;
-                    ++election_vote_cnt;
-                    if (election_vote_cnt > cluster_size() / 2) {
-                        as_leader();
+                auto from = res_vote->from();
+                if (std::find(clusters.begin(), clusters.end(), from) != clusters.end()) {
+                    if (!voted_for_self[from]) {
+                        voted_for_self[from] = true;
+                        ++election_vote_cnt;
+                        if (election_vote_cnt > cluster_size() / 2) {
+                            as_leader();
+                        }
                     }
                 }
             }
