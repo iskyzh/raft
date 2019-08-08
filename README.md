@@ -73,5 +73,3 @@ executable, build a 5-node cluster and test it with different conditions.
 # Todo
 
 - [ ] Async log read and write
-- [ ] Test section 5.4
-- [ ] Cluster membership changes
